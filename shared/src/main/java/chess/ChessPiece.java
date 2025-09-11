@@ -238,33 +238,57 @@ public class ChessPiece {
 
     public HashSet<ChessMove> Pawn(ChessBoard board, ChessPosition myPosition) {
         var moves = new HashSet<ChessMove>();
+        int row = myPosition.getRow();
+        int col = myPosition.getColumn();
 
-        int[][] directions = {
-                {1, 0},
-        };
+        int dir = (this.pieceColor == ChessGame.TeamColor.WHITE) ? 1 : -1;
 
-        for (int[] dir : directions) {
-            int row = myPosition.getRow();
-            int col = myPosition.getColumn();
+        int newRow = row + dir;
+        if (!isInBounds(newRow, col)) {
+            ChessPosition forwardPos = new ChessPosition(newRow, col);
+            if (board.getPiece(forwardPos) == null) {
+                addPawnMove(moves, myPosition, forwardPos);
 
-            row += dir[0];
-            col += dir[1];
-
-            if (isInBounds(row, col)) break;
-
-            ChessPosition newPos = new ChessPosition(row, col);
-            ChessPiece occupyingPiece = board.getPiece(newPos);
-
-            if (occupyingPiece == null) {
-                moves.add(new ChessMove(myPosition, newPos, null));
-            } else {
-                if (occupyingPiece.getTeamColor() != this.getTeamColor()) {
-                    moves.add(new ChessMove(myPosition, newPos, null));
+                if ((this.pieceColor == ChessGame.TeamColor.WHITE && row == 2) ||
+                        (this.pieceColor == ChessGame.TeamColor.BLACK && row == 7)) {
+                    int twoRow = row + 2 * dir;
+                    ChessPosition twoForward = new ChessPosition(twoRow, col);
+                    if (board.getPiece(twoForward) == null) {
+                        addPawnMove(moves, myPosition, twoForward);
+                    }
                 }
             }
         }
+
+        int[][] captureDirs = {{dir, -1}, {dir, 1}};
+        for (int[] cDir : captureDirs) {
+            int cRow = row + cDir[0];
+            int cCol = col + cDir[1];
+            if (!isInBounds(cRow, cCol)) {
+                ChessPosition capturePos = new ChessPosition(cRow, cCol);
+                ChessPiece target = board.getPiece(capturePos);
+                if (target != null && target.getTeamColor() != this.getTeamColor()) {
+                    addPawnMove(moves, myPosition, capturePos);
+                }
+            }
+        }
+
         return moves;
     }
+
+    // Helper for promotion handling
+    private void addPawnMove(HashSet<ChessMove> moves, ChessPosition from, ChessPosition to) {
+        int promotionRow = (this.pieceColor == ChessGame.TeamColor.WHITE) ? 8 : 1;
+        if (to.getRow() == promotionRow) {
+            moves.add(new ChessMove(from, to, PieceType.QUEEN));
+            moves.add(new ChessMove(from, to, PieceType.ROOK));
+            moves.add(new ChessMove(from, to, PieceType.BISHOP));
+            moves.add(new ChessMove(from, to, PieceType.KNIGHT));
+        } else {
+            moves.add(new ChessMove(from, to, null));
+        }
+    }
+
 
     private boolean isInBounds(int row, int col) {
         return row < 1 || row > 8 || col < 1 || col > 8;
