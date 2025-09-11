@@ -67,6 +67,9 @@ public class ChessPiece {
         if (this.type == PieceType.ROOK) {
             moves = Rook(board, myPosition);
         }
+        if (this.type == PieceType.QUEEN) {
+            moves = Queen(board, myPosition);
+        }
 
         return moves;
     }
@@ -177,6 +180,16 @@ public class ChessPiece {
                 }
             }
         }
+        return moves;
+    }
+    public HashSet<ChessMove> Queen(ChessBoard board, ChessPosition myPosition){
+        var moves = new HashSet<ChessMove>();
+        var allMoves = new HashSet<ChessMove>();
+
+        moves = Bishop(board, myPosition);
+        allMoves = Rook(board, myPosition);
+
+        moves.addAll(allMoves);
         return moves;
     }
 
