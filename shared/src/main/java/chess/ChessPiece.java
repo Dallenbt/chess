@@ -85,7 +85,7 @@ public class ChessPiece {
                 row += dir[0];
                 col += dir[1];
 
-                if (!isInBounds(row, col)) break;
+                if (isInBounds(row, col)) break;
 
                 ChessPosition newPos = new ChessPosition(row, col);
                 ChessPiece occupyingPiece = board.getPiece(newPos);
@@ -108,8 +108,13 @@ public class ChessPiece {
         int[][] directions = {
                 {2, 1},
                 {2, -1},
+                {-2, 1},
+                {-2, -1},
                 {-1, 2},
-                {-1, -2}
+                {-1, -2},
+                {1, 2},
+                {1, -2}
+
         };
 
         for (int[] dir : directions) {
@@ -120,7 +125,7 @@ public class ChessPiece {
                 row += dir[0];
                 col += dir[1];
 
-                if (!isInBounds(row, col)) break;
+                if (isInBounds(row, col)) break;
 
                 ChessPosition newPos = new ChessPosition(row, col);
                 ChessPiece occupyingPiece = board.getPiece(newPos);
@@ -131,7 +136,6 @@ public class ChessPiece {
                     if (occupyingPiece.getTeamColor() != this.getTeamColor()) {
                         moves.add(new ChessMove(myPosition, newPos, null));
                     }
-
                 }
 
         }
@@ -139,7 +143,7 @@ public class ChessPiece {
     }
 
     private boolean isInBounds(int row, int col) {
-        return row >= 1 && row <= 8 && col >= 1 && col <= 8;
+        return row < 1 || row > 8 || col < 1 || col > 8;
     }
 
 
