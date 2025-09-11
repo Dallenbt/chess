@@ -59,38 +59,44 @@ public class ChessPiece {
         var moves = new HashSet<ChessMove>();
 
         if (this.type == PieceType.BISHOP) {
-            int[][] directions = {
-                    {1, 1},
-                    {1, -1},
-                    {-1, 1},
-                    {-1, -1}
-            };
+            moves = Bishop(board, myPosition);
+        }
 
-            for (int[] dir : directions) {
-                int row = myPosition.getRow();
-                int col = myPosition.getColumn();
+        return moves;
+    }
+    public HashSet<ChessMove> Bishop(ChessBoard board, ChessPosition myPosition) {
+        var moves = new HashSet<ChessMove>();
 
-                while (true) {
-                    row += dir[0];
-                    col += dir[1];
+        int[][] directions = {
+                {1, 1},
+                {1, -1},
+                {-1, 1},
+                {-1, -1}
+        };
 
-                    if (!isInBounds(row, col)) break;
+        for (int[] dir : directions) {
+            int row = myPosition.getRow();
+            int col = myPosition.getColumn();
 
-                    ChessPosition newPos = new ChessPosition(row, col);
-                    ChessPiece occupyingPiece = board.getPiece(newPos);
+            while (true) {
+                row += dir[0];
+                col += dir[1];
 
-                    if (occupyingPiece == null) {
+                if (!isInBounds(row, col)) break;
+
+                ChessPosition newPos = new ChessPosition(row, col);
+                ChessPiece occupyingPiece = board.getPiece(newPos);
+
+                if (occupyingPiece == null) {
+                    moves.add(new ChessMove(myPosition, newPos, null));
+                } else {
+                    if (occupyingPiece.getTeamColor() != this.getTeamColor()) {
                         moves.add(new ChessMove(myPosition, newPos, null));
-                    } else {
-                        if (occupyingPiece.getTeamColor() != this.getTeamColor()) {
-                            moves.add(new ChessMove(myPosition, newPos, null));
-                        }
-                        break;
                     }
+                    break;
                 }
             }
         }
-
         return moves;
     }
 
