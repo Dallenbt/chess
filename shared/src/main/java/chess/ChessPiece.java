@@ -73,6 +73,10 @@ public class ChessPiece {
         if (this.type == PieceType.KING) {
             moves = King(board, myPosition);
         }
+        if (this.type == PieceType.PAWN) {
+            moves = Pawn(board, myPosition);
+        }
+
         return moves;
     }
     public HashSet<ChessMove> Bishop(ChessBoard board, ChessPosition myPosition) {
@@ -207,6 +211,36 @@ public class ChessPiece {
                 {1, -1},
                 {-1, 1},
                 {-1, -1}
+        };
+
+        for (int[] dir : directions) {
+            int row = myPosition.getRow();
+            int col = myPosition.getColumn();
+
+            row += dir[0];
+            col += dir[1];
+
+            if (isInBounds(row, col)) break;
+
+            ChessPosition newPos = new ChessPosition(row, col);
+            ChessPiece occupyingPiece = board.getPiece(newPos);
+
+            if (occupyingPiece == null) {
+                moves.add(new ChessMove(myPosition, newPos, null));
+            } else {
+                if (occupyingPiece.getTeamColor() != this.getTeamColor()) {
+                    moves.add(new ChessMove(myPosition, newPos, null));
+                }
+            }
+        }
+        return moves;
+    }
+
+    public HashSet<ChessMove> Pawn(ChessBoard board, ChessPosition myPosition) {
+        var moves = new HashSet<ChessMove>();
+
+        int[][] directions = {
+                {1, 0},
         };
 
         for (int[] dir : directions) {
