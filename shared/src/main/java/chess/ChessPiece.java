@@ -114,18 +114,16 @@ public class ChessPiece {
                 {-1, -2},
                 {1, 2},
                 {1, -2}
-
         };
 
         for (int[] dir : directions) {
             int row = myPosition.getRow();
             int col = myPosition.getColumn();
 
-
                 row += dir[0];
                 col += dir[1];
 
-                if (isInBounds(row, col)) break;
+                if (isInBounds(row, col)) continue;
 
                 ChessPosition newPos = new ChessPosition(row, col);
                 ChessPiece occupyingPiece = board.getPiece(newPos);
