@@ -227,7 +227,6 @@ public class ChessPiece {
                 if (occupyingPiece.getTeamColor() != this.getTeamColor()) {
                     moves.add(new ChessMove(myPosition, newPos, null));
                 }
-                break;
             }
         }
         return moves;
