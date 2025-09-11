@@ -64,6 +64,9 @@ public class ChessPiece {
         if (this.type == PieceType.KNIGHT) {
             moves = Knight(board, myPosition);
         }
+        if (this.type == PieceType.ROOK) {
+            moves = Rook(board, myPosition);
+        }
 
         return moves;
     }
@@ -102,6 +105,7 @@ public class ChessPiece {
         }
         return moves;
     }
+
     public HashSet<ChessMove> Knight(ChessBoard board, ChessPosition myPosition) {
         var moves = new HashSet<ChessMove>();
 
@@ -136,6 +140,42 @@ public class ChessPiece {
                     }
                 }
 
+        }
+        return moves;
+    }
+
+    public HashSet<ChessMove> Rook(ChessBoard board, ChessPosition myPosition) {
+        var moves = new HashSet<ChessMove>();
+
+        int[][] directions = {
+                {1, 0},
+                {0, -1},
+                {-1, 0},
+                {0, 1}
+        };
+
+        for (int[] dir : directions) {
+            int row = myPosition.getRow();
+            int col = myPosition.getColumn();
+
+            while (true) {
+                row += dir[0];
+                col += dir[1];
+
+                if (isInBounds(row, col)) break;
+
+                ChessPosition newPos = new ChessPosition(row, col);
+                ChessPiece occupyingPiece = board.getPiece(newPos);
+
+                if (occupyingPiece == null) {
+                    moves.add(new ChessMove(myPosition, newPos, null));
+                } else {
+                    if (occupyingPiece.getTeamColor() != this.getTeamColor()) {
+                        moves.add(new ChessMove(myPosition, newPos, null));
+                    }
+                    break;
+                }
+            }
         }
         return moves;
     }
