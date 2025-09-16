@@ -104,7 +104,7 @@ public class ChessBoard {
     public int hashCode() {
         return Arrays.deepHashCode(board);
     }
-     @Override
+    @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
         for (int row = 7; row >= 0; row--) {
