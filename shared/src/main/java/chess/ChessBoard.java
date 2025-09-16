@@ -1,5 +1,6 @@
 package chess;
 
+import javax.swing.*;
 import java.util.Arrays;
 import java.util.Objects;
 
@@ -36,8 +37,13 @@ public class ChessBoard {
      * position
      */
     public ChessPiece getPiece(ChessPosition position) {
-
-        return board[position.getRow()-1][position.getColumn()-1];
+        ChessPiece piece = board[position.getRow()-1][position.getColumn()-1];
+        if (piece != null){
+            return board[position.getRow() - 1][position.getColumn() - 1];
+        }
+        else{
+            return null;
+        }
     }
 
     /**
@@ -45,8 +51,45 @@ public class ChessBoard {
      * (How the game of chess normally starts)
      */
     public void resetBoard() {
-        throw new RuntimeException("Not implemented");
+        for (int row = 0; row < 8; row++) {
+            for (int col = 0; col < 8; col++) {
+                board[row][col] = null;
+            }
+        }
+
+
+        for (int col = 0; col < 8; col++) {
+            board[1][col] = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.PAWN);
+            board[6][col] = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.PAWN);
+        }
+
+
+        board[0][0] = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.ROOK);
+        board[0][7] = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.ROOK);
+        board[7][0] = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.ROOK);
+        board[7][7] = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.ROOK);
+
+
+        board[0][1] = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.KNIGHT);
+        board[0][6] = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.KNIGHT);
+        board[7][1] = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.KNIGHT);
+        board[7][6] = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.KNIGHT);
+
+
+        board[0][2] = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.BISHOP);
+        board[0][5] = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.BISHOP);
+        board[7][2] = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.BISHOP);
+        board[7][5] = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.BISHOP);
+
+
+        board[0][3] = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.QUEEN);
+        board[7][3] = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.QUEEN);
+
+
+        board[0][4] = new ChessPiece(ChessGame.TeamColor.WHITE, ChessPiece.PieceType.KING);
+        board[7][4] = new ChessPiece(ChessGame.TeamColor.BLACK, ChessPiece.PieceType.KING);
     }
+
 
     @Override
     public boolean equals(Object o) {
@@ -61,4 +104,39 @@ public class ChessBoard {
     public int hashCode() {
         return Arrays.deepHashCode(board);
     }
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        for (int row = 7; row >= 0; row--) {
+            sb.append(row + 1).append(" ");
+            for (int col = 0; col < 8; col++) {
+                ChessPiece piece = board[row][col];
+                if (piece == null) {
+                    sb.append(". ");
+                } else {
+                    char symbol;
+                    switch (piece.getPieceType()) {
+                        case KING -> symbol = 'K';
+                        case QUEEN -> symbol = 'Q';
+                        case ROOK -> symbol = 'R';
+                        case BISHOP -> symbol = 'B';
+                        case KNIGHT -> symbol = 'N';
+                        case PAWN -> symbol = 'P';
+                        default -> symbol = '?';
+                    }
+
+
+                    if (piece.getTeamColor() == ChessGame.TeamColor.BLACK) {
+                        symbol = Character.toLowerCase(symbol);
+                    }
+                    sb.append(symbol).append(" ");
+                }
+            }
+            sb.append("\n");
+        }
+        sb.append("  a b c d e f g h\n");
+
+        return sb.toString();
+    }
+
 }
