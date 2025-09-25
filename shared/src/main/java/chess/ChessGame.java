@@ -150,7 +150,26 @@ public class ChessGame {
      * @return True if the specified team is in checkmate
      */
     public boolean isInCheckmate(TeamColor teamColor) {
-        throw new RuntimeException("Not implemented");
+        if (!isInCheck(teamColor)){
+            return false;
+        }
+        Collection<ChessMove> teamMoves = new HashSet<ChessMove>();
+
+        for (int row = 0; row < 8; row++) {
+            for (int col = 0; col < 8; col++) {
+                ChessPosition position = new ChessPosition(row, col);
+                ChessPiece piece = board.getPiece(position);
+
+                if (piece != null && piece.getTeamColor() == teamColor) {
+                    teamMoves = piece.pieceMoves(board, position);
+                    if (teamMoves != null){
+                        return false;
+                    }
+                }
+            }
+        }
+        return true;
+
     }
 
     /**
@@ -167,10 +186,10 @@ public class ChessGame {
     /**
      * Sets this game's chessboard with a given board
      *
-     * @param board the new board to use
+     * @param newBoard the new board to use
      */
-    public void setBoard(ChessBoard board) {
-        throw new RuntimeException("Not implemented");
+    public void setBoard(ChessBoard newBoard) {
+        board = newBoard;
     }
 
     /**
