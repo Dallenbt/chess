@@ -11,8 +11,8 @@ import java.util.Objects;
  * signature of the existing methods.
  */
 public class ChessGame {
-    public ChessBoard board;
-    public TeamColor currentTurn;
+    private ChessBoard board;
+    private TeamColor currentTurn;
 
     public ChessGame() {
         board = new ChessBoard();
@@ -66,6 +66,8 @@ public class ChessGame {
 
         for(ChessMove move : moves){
             var boardCopy = board;
+            board.addPiece(move.getEndPosition(), piece);
+            board.addPiece(move.getStartPosition(), null);
             if (!isInCheck(currentTurn)){
                 validMoves.add(move);
             }
