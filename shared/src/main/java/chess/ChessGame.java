@@ -110,22 +110,24 @@ public class ChessGame {
      * @return True if the specified team is in check
      */
     public boolean isInCheck(TeamColor teamColor) {
-        var kingPos = findKing(teamColor);
-        Collection<ChessMove> enemyMoves = new HashSet<ChessMove>();
+        ChessPosition kingPos = findKing(teamColor);
         for (int row = 1; row < 9; row++) {
             for (int col = 1; col < 9; col++) {
                 ChessPosition position = new ChessPosition(row, col);
                 ChessPiece enemyPiece = board.getPiece(position);
-                if( enemyPiece != null && enemyPiece.getTeamColor() != teamColor){
-                    enemyMoves = enemyPiece.pieceMoves(board, position);
-                    if (enemyMoves.contains(kingPos)){
-                        return true;
+                if (enemyPiece != null && enemyPiece.getTeamColor() != teamColor) {
+                    Collection<ChessMove> enemyMoves = enemyPiece.pieceMoves(board, position);
+                    for (ChessMove move : enemyMoves) {
+                        if (move.getEndPosition().equals(kingPos)) {
+                            return true;
+                        }
                     }
                 }
             }
         }
         return false;
     }
+
 
     public ChessPosition findKing(TeamColor teamColor) {
         for (int row = 1; row < 9; row++) {
