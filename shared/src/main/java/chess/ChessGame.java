@@ -9,8 +9,14 @@ import java.util.Collection;
  * signature of the existing methods.
  */
 public class ChessGame {
+    public ChessBoard board;
+    public TeamColor currentTurn;
 
     public ChessGame() {
+        board = new ChessBoard();
+        board.resetBoard();
+        currentTurn = TeamColor.WHITE;
+
 
     }
 
@@ -105,6 +111,6 @@ public class ChessGame {
      * @return the chessboard
      */
     public ChessBoard getBoard() {
-        throw new RuntimeException("Not implemented");
+        return board;
     }
 }
