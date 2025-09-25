@@ -112,8 +112,8 @@ public class ChessGame {
     public boolean isInCheck(TeamColor teamColor) {
         var kingPos = findKing(teamColor);
         Collection<ChessMove> enemyMoves = new HashSet<ChessMove>();
-        for (int row = 0; row < 8; row++) {
-            for (int col = 0; col < 8; col++) {
+        for (int row = 1; row < 9; row++) {
+            for (int col = 1; col < 9; col++) {
                 ChessPosition position = new ChessPosition(row, col);
                 ChessPiece enemyPiece = board.getPiece(position);
                 if( enemyPiece != null && enemyPiece.getTeamColor() != teamColor){
@@ -128,8 +128,8 @@ public class ChessGame {
     }
 
     public ChessPosition findKing(TeamColor teamColor) {
-        for (int row = 0; row < 8; row++) {
-            for (int col = 0; col < 8; col++) {
+        for (int row = 1; row < 9; row++) {
+            for (int col = 1; col < 9; col++) {
                 ChessPosition position = new ChessPosition(row, col);
                 ChessPiece piece = board.getPiece(position);
 
@@ -156,8 +156,8 @@ public class ChessGame {
         }
         Collection<ChessMove> teamMoves = new HashSet<ChessMove>();
 
-        for (int row = 0; row < 8; row++) {
-            for (int col = 0; col < 8; col++) {
+        for (int row = 1; row < 9; row++) {
+            for (int col = 1; col < 9; col++) {
                 ChessPosition position = new ChessPosition(row, col);
                 ChessPiece piece = board.getPiece(position);
 
@@ -186,8 +186,8 @@ public class ChessGame {
         }
         Collection<ChessMove> teamMoves = new HashSet<ChessMove>();
 
-        for (int row = 0; row < 8; row++) {
-            for (int col = 0; col < 8; col++) {
+        for (int row = 1; row < 9; row++) {
+            for (int col = 1; col < 9; col++) {
                 ChessPosition position = new ChessPosition(row, col);
                 ChessPiece piece = board.getPiece(position);
 
