@@ -65,8 +65,11 @@ public class ChessGame {
 
         for(ChessMove move : moves){
             var boardCopy = board;
-
+            if (!isInCheck(currentTurn)){
+                validMoves.add(move);
+            }
         }
+        return validMoves;
 
     }
 
@@ -77,7 +80,24 @@ public class ChessGame {
      * @throws InvalidMoveException if move is invalid
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
-        throw new RuntimeException("Not implemented");
+        var piece = board.getPiece(move.getStartPosition());
+        if (piece == null || piece.getTeamColor() != currentTurn){
+            throw InvalidMoveException;
+        }
+
+        var valid = validMoves(move.getStartPosition());
+        if (!valid.contains(move)){
+            throw InvalidMoveException;
+        }
+
+        board.addPiece(move.getEndPosition(), piece);
+        board.addPiece(move.getStartPosition(), null);
+        if(currentTurn == TeamColor.WHITE) {
+            setTeamTurn(TeamColor.BLACK);
+        }
+        else{
+            setTeamTurn(TeamColor.WHITE);
+        }
     }
 
     /**
