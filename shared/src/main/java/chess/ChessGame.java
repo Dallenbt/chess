@@ -84,16 +84,17 @@ public class ChessGame {
     public void makeMove(ChessMove move) throws InvalidMoveException {
         var piece = board.getPiece(move.getStartPosition());
         if (piece == null || piece.getTeamColor() != currentTurn){
-            throw InvalidMoveException;
+            throw new InvalidMoveException("Invalid move: not allowed for this piece");
         }
 
         var valid = validMoves(move.getStartPosition());
         if (!valid.contains(move)){
-            throw InvalidMoveException;
+            throw new InvalidMoveException("Invalid move: not allowed for this piece");
         }
 
         board.addPiece(move.getEndPosition(), piece);
         board.addPiece(move.getStartPosition(), null);
+
         if(currentTurn == TeamColor.WHITE) {
             setTeamTurn(TeamColor.BLACK);
         }
