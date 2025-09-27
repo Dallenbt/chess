@@ -93,8 +93,30 @@ public class ChessGame {
             throw new InvalidMoveException("Invalid move: not allowed for this piece");
         }
 
-        board.addPiece(move.getEndPosition(), piece);
-        board.addPiece(move.getStartPosition(), null);
+        if (move.getPromotionPiece() == null){
+            board.addPiece(move.getEndPosition(), piece);
+            board.addPiece(move.getStartPosition(), null);
+        }
+        else{
+            if (move.getPromotionPiece() == ChessPiece.PieceType.QUEEN){
+                board.addPiece(move.getEndPosition(), new ChessPiece(currentTurn, ChessPiece.PieceType.QUEEN));
+                board.addPiece(move.getStartPosition(), null);
+            }
+            if (move.getPromotionPiece() == ChessPiece.PieceType.ROOK){
+                board.addPiece(move.getEndPosition(), new ChessPiece(currentTurn, ChessPiece.PieceType.ROOK));
+                board.addPiece(move.getStartPosition(), null);
+            }
+            if (move.getPromotionPiece() == ChessPiece.PieceType.BISHOP){
+                board.addPiece(move.getEndPosition(), new ChessPiece(currentTurn, ChessPiece.PieceType.BISHOP));
+                board.addPiece(move.getStartPosition(), null);
+            }
+        if (move.getPromotionPiece() == ChessPiece.PieceType.KNIGHT){
+            board.addPiece(move.getEndPosition(), new ChessPiece(currentTurn, ChessPiece.PieceType.KNIGHT));
+                board.addPiece(move.getStartPosition(), null);
+            }
+        }
+
+
 
         if(currentTurn == TeamColor.WHITE) {
             setTeamTurn(TeamColor.BLACK);
