@@ -65,7 +65,7 @@ public class ChessGame {
         var validMoves = new HashSet<ChessMove>();
 
         for(ChessMove move : moves){
-            var boardCopy = board;
+            var boardCopy = board.copy();
             board.addPiece(move.getEndPosition(), piece);
             board.addPiece(move.getStartPosition(), null);
             if (!isInCheck(currentTurn)){
