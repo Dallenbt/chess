@@ -74,7 +74,6 @@ public class ChessGame {
             board = boardCopy;
         }
         return validMoves;
-
     }
 
     /**
