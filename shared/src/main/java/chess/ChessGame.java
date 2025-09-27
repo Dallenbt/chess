@@ -68,7 +68,7 @@ public class ChessGame {
             var boardCopy = board.copy();
             board.addPiece(move.getEndPosition(), piece);
             board.addPiece(move.getStartPosition(), null);
-            if (!isInCheck(currentTurn)){
+            if (!isInCheck(piece.getTeamColor())){
                 validMoves.add(move);
             }
             board = boardCopy;
