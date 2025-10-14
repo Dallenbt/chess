@@ -3,6 +3,7 @@ package server;
 import com.google.gson.Gson;
 import dataaccess.DataAccessException;
 import dataaccess.MemoryDataAccess;
+import datamodel.AuthData;
 import datamodel.UserData;
 import io.javalin.*;
 import io.javalin.http.Context;
@@ -24,7 +25,7 @@ public class Server {
         server.delete("db", ctx -> userService.clear()); //clear
         server.post("user", ctx -> register(ctx)); //register
         server.post("session", ctx -> login(ctx)); //login
-        server.delete("session", ctx -> userService.clear()); //logout
+        server.delete("session", ctx -> logout(ctx)); //logout
         server.get("game", ctx -> userService.clear()); //list games
         server.post("game", ctx -> userService.clear()); //create games
         server.put("game", ctx -> userService.clear()); //join games
@@ -69,6 +70,20 @@ public class Server {
             ctx.status(401).result(msg);
         }
     }
+    private void logout(Context ctx) {
+        try {
+            String authHeader = ctx.header("Authorization");
+
+
+            userService.logout(authHeader);
+            ctx.status(200).result("{}"); // success
+        } catch (DataAccessException ex) {
+            ctx.status(401).result("{ \"message\": \"Error: unauthorized\" }");
+        } catch (Exception ex) {
+            ctx.status(500).result("{ \"message\": \"Error: server error\" }");
+        }
+    }
+
 
     public int run(int desiredPort) {
         server.start(desiredPort);
