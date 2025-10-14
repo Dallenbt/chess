@@ -21,8 +21,13 @@ public class Server {
         server = Javalin.create(config -> config.staticFiles.add("web"));
 
         // Register your endpoints and exception handlers here.
-        server.delete("db", ctx -> userService.clear());
-        server.post("user", ctx -> register(ctx));
+        server.delete("db", ctx -> userService.clear()); //clear
+        server.post("user", ctx -> register(ctx)); //register
+        server.post("session", ctx -> login(ctx)); //login
+        server.delete("session", ctx -> userService.clear()); //logout
+        server.get("game", ctx -> userService.clear()); //list games
+        server.post("game", ctx -> userService.clear()); //create games
+        server.put("game", ctx -> userService.clear()); //join games
 
 
     }
@@ -44,6 +49,24 @@ public class Server {
         catch (Exception ex){
             var msg = String.format("{ \"message\": \"Error: already taken\" }", ex.getMessage());
             ctx.status(403).result(msg);
+        }
+    }
+    private void login(Context ctx){
+        try {
+            var serilaizer = new Gson();
+            String requestJson = ctx.body();
+            var user = serilaizer.fromJson(requestJson, UserData.class);
+
+            var authData = userService.login(user);
+            ctx.result(serilaizer.toJson(authData));
+        }
+        catch (DataAccessException ex){
+            var msg = String.format("{ \"message\": \"Error: bad request\" }", ex.getMessage());
+            ctx.status(400).result(msg);
+        }
+        catch (Exception ex){
+            var msg = String.format("{ \"message\": \"Error: unauthorized\" }", ex.getMessage());
+            ctx.status(401).result(msg);
         }
     }
 

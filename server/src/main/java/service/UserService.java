@@ -16,13 +16,24 @@ public class UserService {
 
     public AuthData register(UserData user) throws Exception{
         if (dataAccess.getUser(user.username()) != null){
-            throw new Exception("Already exists");
+            throw new Exception("Already Exists");
         }
         if (user.username() == null || user.password() == null || user.email() == null)
             throw new DataAccessException("Bad Request");
         dataAccess.createUser(user);
         return new AuthData(user.username(),generateAuthToken());
     }
+
+    public AuthData login(UserData user) throws Exception{
+        if (user.username() == null || user.password() == null)
+            throw new DataAccessException("Bad Request");
+        if (user.password() != (dataAccess.getUser(user.username()).password())){
+            throw new Exception("User Doesn't Exist");
+        }
+        dataAccess.createUser(user);
+        return new AuthData(user.username(),generateAuthToken());
+    }
+
 
     public void clear(){
         dataAccess.clear();
