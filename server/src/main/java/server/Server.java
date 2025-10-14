@@ -1,6 +1,7 @@
 package server;
 
 import com.google.gson.Gson;
+import dataaccess.DataAccessException;
 import dataaccess.MemoryDataAccess;
 import datamodel.UserData;
 import io.javalin.*;
@@ -20,7 +21,7 @@ public class Server {
         server = Javalin.create(config -> config.staticFiles.add("web"));
 
         // Register your endpoints and exception handlers here.
-        server.delete("db", ctx -> ctx.result("{}"));
+        server.delete("db", ctx -> userService.clear());
         server.post("user", ctx -> register(ctx));
 
 
@@ -35,6 +36,10 @@ public class Server {
             var authData = userService.register(user);
 
             ctx.result(serilaizer.toJson(authData));
+        }
+        catch (DataAccessException ex){
+            var msg = String.format("{ \"message\": \"Error: bad request\" }", ex.getMessage());
+            ctx.status(400).result(msg);
         }
         catch (Exception ex){
             var msg = String.format("{ \"message\": \"Error: already taken\" }", ex.getMessage());
