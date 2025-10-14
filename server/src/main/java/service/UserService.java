@@ -21,17 +21,17 @@ public class UserService {
         if (user.username() == null || user.password() == null || user.email() == null)
             throw new DataAccessException("Bad Request");
         dataAccess.createUser(user);
-        return new AuthData(user.username(),generateAuthToken());
+        return new AuthData(user.username(), dataAccess.createAuth());
     }
 
     public AuthData login(UserData user) throws Exception{
         if (user.username() == null || user.password() == null)
             throw new DataAccessException("Bad Request");
         if (user.password() != (dataAccess.getUser(user.username()).password())){
-            throw new Exception("User Doesn't Exist");
+            throw new Exception("Wrong Password");
         }
         dataAccess.createUser(user);
-        return new AuthData(user.username(),generateAuthToken());
+        return new AuthData(user.username(), dataAccess.createAuth());
     }
 
 
@@ -40,7 +40,4 @@ public class UserService {
     }
 
 
-    private String generateAuthToken(){
-        return UUID.randomUUID().toString();
-    }
 }
