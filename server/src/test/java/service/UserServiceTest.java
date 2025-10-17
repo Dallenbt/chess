@@ -21,6 +21,15 @@ class UserServiceTest {
     }
 
     @Test
+    void registerInvalidUserName() throws Exception {
+        DataAccess db = new MemoryDataAccess();
+        var user = new UserData(null, "j@j.com", "toomanysecrets");
+        var userService = new UserService(db);
+        assertThrows(Exception.class, () -> userService.register(user));
+
+    }
+
+    @Test
     void login() {
     }
 
