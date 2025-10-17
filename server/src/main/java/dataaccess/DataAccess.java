@@ -2,6 +2,8 @@ package dataaccess;
 
 import datamodel.*;
 
+import java.util.HashMap;
+
 public interface DataAccess {
     void clear();
     void createUser (UserData user);
@@ -9,4 +11,8 @@ public interface DataAccess {
     String createAuth(String Username);
     AuthData getAuth(String authToken);
     void deleteAuth(String authToken);
+    void createGame (GameData game);
+    GameData getGame(int gameID);
+    HashMap<Integer, GameData> listGames();
+    void updateGame(GameData game);
 }

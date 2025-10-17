@@ -9,6 +9,7 @@ import java.util.UUID;
 public class MemoryDataAccess implements DataAccess{
     private final HashMap<String, UserData> users = new HashMap<>();
     private final HashMap<String, AuthData> auths = new HashMap<>();
+    private final HashMap<Integer, GameData> games = new HashMap<>();
 
     @Override
     public void clear() {
@@ -43,5 +44,27 @@ public class MemoryDataAccess implements DataAccess{
     @Override
     public void deleteAuth(String authToken) {
         auths.remove(authToken);
+    }
+
+    @Override
+    public void createGame(GameData game) {
+        games.put(game.gameID(), game);
+
+    }
+
+    @Override
+    public GameData getGame(int gameID) {
+        return games.get(gameID);
+    }
+
+    @Override
+    public HashMap<Integer, GameData> listGames() {
+        return games;
+    }
+
+    @Override
+    public void updateGame(GameData game) {
+        games.replace(game.gameID(), game);
+
     }
 }
