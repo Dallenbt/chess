@@ -13,6 +13,6 @@ public interface DataAccess {
     void deleteAuth(String authToken);
     void createGame (GameData game);
     GameData getGame(int gameID);
-    HashMap<Integer, GameData> listGames();
+    Iterable<GameData> listGames();
     void updateGame(GameData game);
 }

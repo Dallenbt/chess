@@ -59,8 +59,8 @@ public class MemoryDataAccess implements DataAccess{
     }
 
     @Override
-    public HashMap<Integer, GameData> listGames() {
-        return games;
+    public Iterable<GameData> listGames() {
+        return games.values();
     }
 
     @Override

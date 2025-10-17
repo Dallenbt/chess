@@ -91,11 +91,12 @@ public class Server {
 
     private void listGames(Context ctx){
         try {
-            var serilaizer = new Gson();
+            var serializer = new Gson();
             String authHeader = ctx.header("Authorization");
-
-            HashMap<Integer, GameData> games = gameService.listGames(authHeader);
-            ctx.result(serilaizer.toJson(games));
+            Iterable<GameData> games = gameService.listGames(authHeader);
+            HashMap<String, Iterable<GameData>> response = new HashMap<>();
+            response.put("games", games);
+            ctx.status(200).result(serializer.toJson(response));
         } catch (DataAccessException ex) {
             ctx.status(401).result("{ \"message\": \"Error: unauthorized\" }");
         } catch (Exception ex) {

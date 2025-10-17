@@ -13,7 +13,7 @@ public class GameService {
         this.dataAccess = dataAccess;
     }
 
-    public HashMap<Integer, GameData> listGames(String authToken) throws Exception {
+    public Iterable<GameData> listGames(String authToken) throws Exception {
         var auth = dataAccess.getAuth(authToken);
         if (auth == null) {
             throw new DataAccessException("Unauthorized");
