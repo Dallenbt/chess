@@ -15,6 +15,7 @@ public class MemoryDataAccess implements DataAccess{
     public void clear() {
         users.clear();
         auths.clear();
+        games.clear();
     }
 
     @Override
