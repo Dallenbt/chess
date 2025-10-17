@@ -32,8 +32,8 @@ public class Server {
         server.post("session", ctx -> login(ctx)); //login
         server.delete("session", ctx -> logout(ctx)); //logout
         server.get("game", ctx -> listGames(ctx)); //list games
-        server.post("game", ctx -> userService.clear()); //create games
-        server.put("game", ctx -> userService.clear()); //join games
+        server.post("game", ctx -> createGame(ctx)); //create game
+        server.put("game", ctx -> userService.clear()); //join game
 
 
     }
@@ -101,6 +101,27 @@ public class Server {
             ctx.status(401).result("{ \"message\": \"Error: unauthorized\" }");
         } catch (Exception ex) {
             ctx.status(500).result("{ \"message\": \"Error: server error\" }");
+        }
+
+    }
+
+    private void createGame(Context ctx){
+        try {
+            var serializer = new Gson();
+            String auth = ctx.header("Authorization");
+            var req = serializer.fromJson(ctx.body(), Map.class);
+            String name = (String) req.get("gameName");
+
+            var game = gameService.createGame(auth, name);
+            ctx.status(200).result(serializer.toJson(Map.of("gameID", game.gameID())));
+        }
+        catch (DataAccessException ex){
+            var msg = String.format("{ \"message\": \"Error: unauthorized\" }", ex.getMessage());
+            ctx.status(401).result(msg);
+        }
+        catch (Exception ex){
+            var msg = String.format("{ \"message\": \"Error: bad request\" }", ex.getMessage());
+            ctx.status(400).result(msg);
         }
 
     }
