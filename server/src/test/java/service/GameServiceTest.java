@@ -24,6 +24,16 @@ class GameServiceTest {
         assertEquals("dubbin", game.gameName());
 
     }
+    @Test
+    void createGameFail() throws Exception {
+        DataAccess db = new MemoryDataAccess();
+        var user = new UserData("Joe", "j@j.com", "toomanysecrets");
+        var userService = new UserService(db);
+        var gameService = new GameService(db);
+        var authData = userService.register(user);
+        assertThrows(Exception.class, () -> gameService.createGame(authData.authToken(), null));
+
+    }
 
     @Test
     void joinGame() throws Exception {
@@ -36,5 +46,17 @@ class GameServiceTest {
         gameService.joinGame(authData.authToken(), "WHITE", game.gameID());
         var newgame = db.getGame(game.gameID());
         assertEquals("Joe", newgame.whiteUsername());
+    }
+
+    @Test
+    void joinGameFail() throws Exception {
+        DataAccess db = new MemoryDataAccess();
+        var user = new UserData("Joe", "j@j.com", "toomanysecrets");
+        var userService = new UserService(db);
+        var gameService = new GameService(db);
+        var authData = userService.register(user);
+        var game = gameService.createGame(authData.authToken(), "dubbin");
+        assertThrows(Exception.class, () -> gameService.joinGame(authData.authToken(), "grey", game.gameID()));
+
     }
 }

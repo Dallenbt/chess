@@ -64,8 +64,8 @@ public class MemoryDataAccess implements DataAccess{
     public Iterable<GameData> listGames() {
         HashMap<Integer, GameData> gameInfo = new HashMap<>();
         for(GameData entry : games.values()){
-            String white = entry.whiteUsername() == null ? "" : entry.whiteUsername();
-            String black = entry.blackUsername() == null ? "" : entry.blackUsername();
+            String white = entry.whiteUsername() == null ? "null" : entry.whiteUsername();
+            String black = entry.blackUsername() == null ? "null" : entry.blackUsername();
             GameData info = new GameData(entry.gameID(), white, black, entry.gameName(), null);
             gameInfo.put(entry.gameID(), info);
 
