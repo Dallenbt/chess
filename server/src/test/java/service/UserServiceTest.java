@@ -58,6 +58,26 @@ class UserServiceTest {
     }
 
     @Test
-    void logout() {
+    void logout() throws Exception{
+        DataAccess db = new MemoryDataAccess();
+        var user = new UserData("Joe", "j@j.com", "toomanysecrets");
+        var userService = new UserService(db);
+        userService.register(user);
+        var loginResult = userService.login(user);
+        userService.logout(loginResult.authToken());
+        assertNull(db.getAuth(loginResult.authToken()));
+
+    }
+
+    @Test
+    void logoutNull() throws Exception{
+        DataAccess db = new MemoryDataAccess();
+        var user = new UserData("Joe", "j@j.com", "toomanysecrets");
+        var userService = new UserService(db);
+        userService.register(user);
+        var loginResult = userService.login(user);
+        userService.logout(loginResult.authToken());
+        assertThrows(Exception.class, () -> userService.logout(loginResult.authToken()));
+
     }
 }
