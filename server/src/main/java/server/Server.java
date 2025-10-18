@@ -33,7 +33,7 @@ public class Server {
         server.delete("session", ctx -> logout(ctx)); //logout
         server.get("game", ctx -> listGames(ctx)); //list games
         server.post("game", ctx -> createGame(ctx)); //create game
-        server.put("game", ctx -> userService.clear()); //join game
+        server.put("game", ctx -> joinGame(ctx)); //join game
 
 
     }
@@ -56,6 +56,9 @@ public class Server {
             var msg = String.format("{ \"message\": \"Error: already taken\" }", ex.getMessage());
             ctx.status(403).result(msg);
         }
+        catch (Throwable ex) {
+            ctx.status(500).result("{ \"message\": \"Error: server error\" }");
+        }
     }
     private void login(Context ctx){
         try {
@@ -73,6 +76,9 @@ public class Server {
         catch (Exception ex){
             var msg = String.format("{ \"message\": \"Error: unauthorized\" }", ex.getMessage());
             ctx.status(401).result(msg);
+        }
+        catch (Throwable ex) {
+            ctx.status(500).result("{ \"message\": \"Error: server error\" }");
         }
     }
     private void logout(Context ctx) {
@@ -123,6 +129,12 @@ public class Server {
             var msg = String.format("{ \"message\": \"Error: bad request\" }", ex.getMessage());
             ctx.status(400).result(msg);
         }
+        catch (Throwable ex) {
+            ctx.status(500).result("{ \"message\": \"Error: server error\" }");
+        }
+
+    }
+    private void joinGame(Context ctx){
 
     }
 
