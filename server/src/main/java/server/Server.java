@@ -140,7 +140,7 @@ public class Server {
             String auth = ctx.header("Authorization");
             var req = serializer.fromJson(ctx.body(), Map.class);
             String color = (String) req.get("playerColor");
-            int ID = (int) req.get("gameID");
+            int ID = ((Double) req.get("gameID")).intValue();
 
             gameService.joinGame(auth, color, ID);
             ctx.status(200).result("{}");

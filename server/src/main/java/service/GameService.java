@@ -50,8 +50,14 @@ public class GameService {
         if (!color.equalsIgnoreCase("WHITE") && !color.equalsIgnoreCase("BLACK")){
             throw new Exception();
         }
-        if (game.whiteUsername() != null && game.blackUsername() == null) {
-            throw new Exception("Game is full");
+        if (game.whiteUsername() != null && game.blackUsername() != null) {
+            throw new IllegalAccessException("Game is full");
+        }
+        if (color.equals("WHITE") && game.whiteUsername() != null) {
+            throw new IllegalAccessException("White seat is already taken");
+        }
+        if (color.equals("BLACK") && game.blackUsername() != null) {
+            throw new IllegalAccessException("Black seat is already taken");
         }
         if (color.equals("WHITE")){
             GameData update = new GameData(game.gameID(), auth.username(), game.blackUsername(), game.gameName(), game.game());
