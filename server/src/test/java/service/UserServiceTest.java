@@ -30,7 +30,23 @@ class UserServiceTest {
     }
 
     @Test
-    void login() {
+    void login() throws Exception{
+        DataAccess db = new MemoryDataAccess();
+        var user = new UserData("Joe", "j@j.com", "toomanysecrets");
+        var userService = new UserService(db);
+        var authData = userService.register(user);
+        var loginResult = userService.login(user);
+        assertNotNull(loginResult);
+        assertEquals(user.username(), loginResult.username());
+        assertTrue(!loginResult.authToken().isEmpty());
+    }
+
+    @Test
+    void loginNullUser (){
+        DataAccess db = new MemoryDataAccess();
+        var user = new UserData(null, "j@j.com", "toomanysecrets");
+        var userService = new UserService(db);
+        assertThrows(Exception.class, () -> userService.login(user));
     }
 
     @Test
