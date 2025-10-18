@@ -47,17 +47,17 @@ public class GameService {
         if (game == null){
             throw new Exception();
         }
-        if (color != "WHITE" || color != "BLACK"){
+        if (!color.equalsIgnoreCase("WHITE") && !color.equalsIgnoreCase("BLACK")){
             throw new Exception();
         }
-        if (game.whiteUsername() != "" && game.blackUsername() != ""){
-            throw new IllegalAccessException();
+        if (game.whiteUsername() != null && game.blackUsername() == null) {
+            throw new Exception("Game is full");
         }
-        if (color == "WHITE"){
+        if (color.equals("WHITE")){
             GameData update = new GameData(game.gameID(), auth.username(), game.blackUsername(), game.gameName(), game.game());
             dataAccess.updateGame(update);
         }
-        if (color == "BLACK"){
+        if (color.equals("BLACK")){
             GameData update = new GameData(game.gameID(), game.whiteUsername(), auth.username(), game.gameName(), game.game());
             dataAccess.updateGame(update);
         }
