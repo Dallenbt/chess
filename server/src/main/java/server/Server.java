@@ -135,6 +135,32 @@ public class Server {
 
     }
     private void joinGame(Context ctx){
+        try {
+            var serializer = new Gson();
+            String auth = ctx.header("Authorization");
+            var req = serializer.fromJson(ctx.body(), Map.class);
+            String color = (String) req.get("playerColor");
+            int ID = (int) req.get("gameID");
+
+            gameService.joinGame(auth, color, ID);
+            ctx.status(200).result("{}");
+        }
+        catch (DataAccessException ex){
+            var msg = String.format("{ \"message\": \"Error: unauthorized\" }", ex.getMessage());
+            ctx.status(401).result(msg);
+        }
+        catch (IllegalAccessException ex){
+            var msg = String.format("{ \"message\": \"Error: already taken\" }", ex.getMessage());
+            ctx.status(403).result(msg);
+        }
+        catch (Exception ex){
+            var msg = String.format("{ \"message\": \"Error: bad request\" }", ex.getMessage());
+            ctx.status(400).result(msg);
+        }
+        catch (Throwable ex) {
+            ctx.status(500).result("{ \"message\": \"Error: server error\" }");
+        }
+
 
     }
 

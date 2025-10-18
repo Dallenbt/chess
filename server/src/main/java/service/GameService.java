@@ -38,6 +38,32 @@ public class GameService {
         return game;
     }
 
+    public void joinGame(String authToken, String color, int ID) throws Exception{
+        var auth = dataAccess.getAuth(authToken);
+        var game = dataAccess.getGame(ID);
+        if (auth == null) {
+            throw new DataAccessException("Unauthorized");
+        }
+        if (game == null){
+            throw new Exception();
+        }
+        if (color != "WHITE" || color != "BLACK"){
+            throw new Exception();
+        }
+        if (game.whiteUsername() != "" && game.blackUsername() != ""){
+            throw new IllegalAccessException();
+        }
+        if (color == "WHITE"){
+            GameData update = new GameData(game.gameID(), auth.username(), game.blackUsername(), game.gameName(), game.game());
+            dataAccess.updateGame(update);
+        }
+        if (color == "BLACK"){
+            GameData update = new GameData(game.gameID(), game.whiteUsername(), auth.username(), game.gameName(), game.game());
+            dataAccess.updateGame(update);
+        }
+
+    }
+
 
 
 
