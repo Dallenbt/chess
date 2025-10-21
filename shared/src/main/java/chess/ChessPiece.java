@@ -89,31 +89,7 @@ public class ChessPiece {
                 {-1, -1}
         };
 
-        for (int[] dir : directions) {
-            int row = myPosition.getRow();
-            int col = myPosition.getColumn();
-
-            while (true) {
-                row += dir[0];
-                col += dir[1];
-
-                if (isInBounds(row, col)){
-                    break;
-                }
-
-                ChessPosition newPos = new ChessPosition(row, col);
-                ChessPiece occupyingPiece = board.getPiece(newPos);
-
-                if (occupyingPiece == null) {
-                    moves.add(new ChessMove(myPosition, newPos, null));
-                } else {
-                    if (occupyingPiece.getTeamColor() != this.getTeamColor()) {
-                        moves.add(new ChessMove(myPosition, newPos, null));
-                    }
-                    break;
-                }
-            }
-        }
+        moves = moveHelper(directions, board, myPosition, true);
         return moves;
     }
 
@@ -131,29 +107,7 @@ public class ChessPiece {
                 {1, -2}
         };
 
-        for (int[] dir : directions) {
-            int row = myPosition.getRow();
-            int col = myPosition.getColumn();
-
-                row += dir[0];
-                col += dir[1];
-
-                if (isInBounds(row, col)) {
-                    continue;
-                }
-
-                ChessPosition newPos = new ChessPosition(row, col);
-                ChessPiece occupyingPiece = board.getPiece(newPos);
-
-                if (occupyingPiece == null) {
-                    moves.add(new ChessMove(myPosition, newPos, null));
-                } else {
-                    if (occupyingPiece.getTeamColor() != this.getTeamColor()) {
-                        moves.add(new ChessMove(myPosition, newPos, null));
-                    }
-                }
-
-        }
+        moves = moveHelper(directions, board, myPosition, false);
         return moves;
     }
 
@@ -167,31 +121,7 @@ public class ChessPiece {
                 {0, 1}
         };
 
-        for (int[] dir : directions) {
-            int row = myPosition.getRow();
-            int col = myPosition.getColumn();
-
-            while (true) {
-                row += dir[0];
-                col += dir[1];
-
-                if (isInBounds(row, col)) {
-                    break;
-                }
-
-                ChessPosition newPos = new ChessPosition(row, col);
-                ChessPiece occupyingPiece = board.getPiece(newPos);
-
-                if (occupyingPiece == null) {
-                    moves.add(new ChessMove(myPosition, newPos, null));
-                } else {
-                    if (occupyingPiece.getTeamColor() != this.getTeamColor()) {
-                        moves.add(new ChessMove(myPosition, newPos, null));
-                    }
-                    break;
-                }
-            }
-        }
+        moves = moveHelper(directions, board, myPosition, true);
         return moves;
     }
     public HashSet<ChessMove> queen(ChessBoard board, ChessPosition myPosition){
@@ -219,30 +149,46 @@ public class ChessPiece {
                 {-1, -1}
         };
 
+        moves = moveHelper(directions, board, myPosition, false);
+        return moves;
+    }
+    public HashSet<ChessMove> moveHelper(int[][] directions, ChessBoard board, ChessPosition myPosition, boolean loop) {
+        var moves = new HashSet<ChessMove>();
+
         for (int[] dir : directions) {
             int row = myPosition.getRow();
             int col = myPosition.getColumn();
 
-            row += dir[0];
-            col += dir[1];
+            while (true) {
+                row += dir[0];
+                col += dir[1];
 
-            if (isInBounds(row, col)) {
-                break;
-            }
+                if (isInBounds(row, col)) {
+                    break;
+                }
 
-            ChessPosition newPos = new ChessPosition(row, col);
-            ChessPiece occupyingPiece = board.getPiece(newPos);
+                ChessPosition newPos = new ChessPosition(row, col);
+                ChessPiece occupyingPiece = board.getPiece(newPos);
 
-            if (occupyingPiece == null) {
-                moves.add(new ChessMove(myPosition, newPos, null));
-            } else {
-                if (occupyingPiece.getTeamColor() != this.getTeamColor()) {
+                if (occupyingPiece == null) {
                     moves.add(new ChessMove(myPosition, newPos, null));
+                } else {
+                    if (occupyingPiece.getTeamColor() != this.getTeamColor()) {
+                        moves.add(new ChessMove(myPosition, newPos, null));
+                    }
+                    break;
+                }
+
+
+                if (!loop) {
+                    break;
                 }
             }
         }
+
         return moves;
     }
+
 
     public HashSet<ChessMove> pawn(ChessBoard board, ChessPosition myPosition) {
         var moves = new HashSet<ChessMove>();
