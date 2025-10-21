@@ -38,9 +38,9 @@ public class GameService {
         return game;
     }
 
-    public void joinGame(String authToken, String color, int ID) throws Exception{
+    public void joinGame(String authToken, String color, int id) throws Exception{
         var auth = dataAccess.getAuth(authToken);
-        var game = dataAccess.getGame(ID);
+        var game = dataAccess.getGame(id);
         if (auth == null) {
             throw new DataAccessException("Unauthorized");
         }
