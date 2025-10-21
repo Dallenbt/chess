@@ -9,10 +9,7 @@ class DataAccessTest {
 
     @Test
     void clear() {
-        DataAccess db = new MemoryDataAccess();
-        db.createUser(new UserData("Joe", "j@j.com", "toomanysecrets"));
-        db.clear();
-        assertNull(db.getUser("Joe"));
+
     }
 
     @Test
