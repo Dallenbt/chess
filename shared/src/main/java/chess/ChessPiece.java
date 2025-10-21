@@ -59,27 +59,27 @@ public class ChessPiece {
         var moves = new HashSet<ChessMove>();
 
         if (this.type == PieceType.BISHOP) {
-            moves = Bishop(board, myPosition);
+            moves = bishop(board, myPosition);
         }
         if (this.type == PieceType.KNIGHT) {
-            moves = Knight(board, myPosition);
+            moves = knight(board, myPosition);
         }
         if (this.type == PieceType.ROOK) {
-            moves = Rook(board, myPosition);
+            moves = rook(board, myPosition);
         }
         if (this.type == PieceType.QUEEN) {
-            moves = Queen(board, myPosition);
+            moves = queen(board, myPosition);
         }
         if (this.type == PieceType.KING) {
-            moves = King(board, myPosition);
+            moves = king(board, myPosition);
         }
         if (this.type == PieceType.PAWN) {
-            moves = Pawn(board, myPosition);
+            moves = pawn(board, myPosition);
         }
 
         return moves;
     }
-    public HashSet<ChessMove> Bishop(ChessBoard board, ChessPosition myPosition) {
+    public HashSet<ChessMove> bishop(ChessBoard board, ChessPosition myPosition) {
         var moves = new HashSet<ChessMove>();
 
         int[][] directions = {
@@ -115,7 +115,7 @@ public class ChessPiece {
         return moves;
     }
 
-    public HashSet<ChessMove> Knight(ChessBoard board, ChessPosition myPosition) {
+    public HashSet<ChessMove> knight(ChessBoard board, ChessPosition myPosition) {
         var moves = new HashSet<ChessMove>();
 
         int[][] directions = {
@@ -153,7 +153,7 @@ public class ChessPiece {
         return moves;
     }
 
-    public HashSet<ChessMove> Rook(ChessBoard board, ChessPosition myPosition) {
+    public HashSet<ChessMove> rook(ChessBoard board, ChessPosition myPosition) {
         var moves = new HashSet<ChessMove>();
 
         int[][] directions = {
@@ -188,18 +188,18 @@ public class ChessPiece {
         }
         return moves;
     }
-    public HashSet<ChessMove> Queen(ChessBoard board, ChessPosition myPosition){
+    public HashSet<ChessMove> queen(ChessBoard board, ChessPosition myPosition){
         var moves = new HashSet<ChessMove>();
         var allMoves = new HashSet<ChessMove>();
 
-        moves = Bishop(board, myPosition);
-        allMoves = Rook(board, myPosition);
+        moves = bishop(board, myPosition);
+        allMoves = rook(board, myPosition);
 
         moves.addAll(allMoves);
         return moves;
     }
 
-    public HashSet<ChessMove> King(ChessBoard board, ChessPosition myPosition) {
+    public HashSet<ChessMove> king(ChessBoard board, ChessPosition myPosition) {
         var moves = new HashSet<ChessMove>();
 
         int[][] directions = {
@@ -236,7 +236,7 @@ public class ChessPiece {
         return moves;
     }
 
-    public HashSet<ChessMove> Pawn(ChessBoard board, ChessPosition myPosition) {
+    public HashSet<ChessMove> pawn(ChessBoard board, ChessPosition myPosition) {
         var moves = new HashSet<ChessMove>();
         int row = myPosition.getRow();
         int col = myPosition.getColumn();
