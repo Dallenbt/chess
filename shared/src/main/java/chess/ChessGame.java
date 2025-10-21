@@ -134,14 +134,17 @@ public class ChessGame {
      */
     public boolean isInCheck(TeamColor teamColor) {
         ChessPosition kingPos = findKing(teamColor);
+        Collection<ChessMove> enemyMoves = new HashSet<ChessMove>();
         for (int row = 1; row < 9; row++) {
             for (int col = 1; col < 9; col++) {
                 ChessPosition position = new ChessPosition(row, col);
                 ChessPiece enemyPiece = board.getPiece(position);
                 if (enemyPiece != null && enemyPiece.getTeamColor() != teamColor) {
-                    Collection<ChessMove> enemyMoves = enemyPiece.pieceMoves(board, position);
-                    for (ChessMove move : enemyMoves) {
-                        if (move.getEndPosition().equals(kingPos)){ return true;}
+                     enemyMoves = enemyPiece.pieceMoves(board, position);
+                }
+                for (ChessMove move : enemyMoves) {
+                    if (move.getEndPosition().equals(kingPos)){
+                        return true;
                     }
                 }
             }
