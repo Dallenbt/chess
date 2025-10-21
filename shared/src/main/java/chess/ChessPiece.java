@@ -97,7 +97,9 @@ public class ChessPiece {
                 row += dir[0];
                 col += dir[1];
 
-                if (isInBounds(row, col)) break;
+                if (isInBounds(row, col)){
+                    break;
+                }
 
                 ChessPosition newPos = new ChessPosition(row, col);
                 ChessPiece occupyingPiece = board.getPiece(newPos);
@@ -136,7 +138,9 @@ public class ChessPiece {
                 row += dir[0];
                 col += dir[1];
 
-                if (isInBounds(row, col)) continue;
+                if (isInBounds(row, col)) {
+                    continue;
+                }
 
                 ChessPosition newPos = new ChessPosition(row, col);
                 ChessPiece occupyingPiece = board.getPiece(newPos);
@@ -171,7 +175,9 @@ public class ChessPiece {
                 row += dir[0];
                 col += dir[1];
 
-                if (isInBounds(row, col)) break;
+                if (isInBounds(row, col)) {
+                    break;
+                }
 
                 ChessPosition newPos = new ChessPosition(row, col);
                 ChessPiece occupyingPiece = board.getPiece(newPos);
@@ -220,7 +226,9 @@ public class ChessPiece {
             row += dir[0];
             col += dir[1];
 
-            if (isInBounds(row, col)) break;
+            if (isInBounds(row, col)) {
+                break;
+            }
 
             ChessPosition newPos = new ChessPosition(row, col);
             ChessPiece occupyingPiece = board.getPiece(newPos);
