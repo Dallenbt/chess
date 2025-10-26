@@ -50,7 +50,7 @@ class UserServiceTest {
     }
 
     @Test
-    void clear() {
+    void clear() throws Exception {
         DataAccess db = new MemoryDataAccess();
         db.createUser(new UserData("Joe", "j@j.com", "toomanysecrets"));
         db.clear();

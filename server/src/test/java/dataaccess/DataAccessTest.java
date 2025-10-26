@@ -13,7 +13,7 @@ class DataAccessTest {
     }
 
     @Test
-    void createUser() {
+    void createUser() throws Exception {
         DataAccess db = new MemoryDataAccess();
         var user = new UserData("Joe", "j@j.com", "toomanysecrets");
         db.createUser(user);
