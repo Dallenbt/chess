@@ -8,12 +8,19 @@ import static org.junit.jupiter.api.Assertions.*;
 class SqlDataAccessTest {
 
     @Test
-    void clear() {
+    void clear() throws Exception {
+        DataAccess db = new SqlDataAccess();
+        db.clear();
+        var user = new UserData("bob", "bob@email.com","hashedpw" );
+        db.createUser(user);
+        db.clear();
+        assertEquals(null, db.getUser(user.username()));
     }
 
     @Test
     public void createUserPositive() throws Exception {
         DataAccess db = new SqlDataAccess();
+        db.clear();
         var user = new UserData("bob", "bob@email.com","hashedpw" );
         db.createUser(user);
         var found = db.getUser("bob");

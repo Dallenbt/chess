@@ -33,27 +33,27 @@ public class DatabaseManager {
         try (var conn = DatabaseManager.getConnection()) {
             try (var stmt = conn.createStatement()) {
                 stmt.executeUpdate("""
-                CREATE TABLE IF NOT EXISTS user (
-                    username VARCHAR(50) PRIMARY KEY,
+                CREATE TABLE IF NOT EXISTS userData (
+                    username VARCHAR(255) PRIMARY KEY,
                     password VARCHAR(255) NOT NULL,
                     email VARCHAR(255)
                 );
             """);
 
                 stmt.executeUpdate("""
-                CREATE TABLE IF NOT EXISTS auth (
+                CREATE TABLE IF NOT EXISTS authData (
                     authToken VARCHAR(255) PRIMARY KEY,
-                    username VARCHAR(50),
+                    username VARCHAR(255),
                     FOREIGN KEY (username) REFERENCES user(username) ON DELETE CASCADE
                 );
             """);
 
                 stmt.executeUpdate("""
-                CREATE TABLE IF NOT EXISTS game (
+                CREATE TABLE IF NOT EXISTS gameData (
                     gameID INT AUTO_INCREMENT PRIMARY KEY,
                     gameName VARCHAR(255),
-                    whiteUsername VARCHAR(50),
-                    blackUsername VARCHAR(50),
+                    whiteUsername VARCHAR(255),
+                    blackUsername VARCHAR(255),
                     gameJSON TEXT
                 );
             """);

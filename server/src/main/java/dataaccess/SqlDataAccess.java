@@ -68,7 +68,7 @@ public class SqlDataAccess implements DataAccess{
                             rs.getString("email")
                     );
                 }
-                return null; // not found
+                return null;
             }
         } catch (SQLException e) {
             throw new DataAccessException("Error reading user", e);
@@ -113,7 +113,16 @@ public class SqlDataAccess implements DataAccess{
 
 
     @Override
-    public void deleteAuth(String authToken) {
+    public void deleteAuth(String authToken) throws Exception {
+        try (var conn = DatabaseManager.getConnection();
+             var stmt = conn.createStatement()) {
+
+            stmt.executeUpdate("DELETE authToken FROM auth");
+        } catch (SQLException e) {
+            throw new DataAccessException("Error clearing database", e);
+        } catch (DataAccessException e) {
+            throw new RuntimeException(e);
+        }
 
     }
 
