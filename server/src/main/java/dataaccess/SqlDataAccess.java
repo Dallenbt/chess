@@ -1,8 +1,11 @@
 package dataaccess;
 
+import chess.ChessGame;
 import datamodel.AuthData;
 import datamodel.GameData;
 import datamodel.UserData;
+import com.google.gson.Gson;
+
 
 import java.sql.SQLException;
 import java.util.UUID;
@@ -10,6 +13,7 @@ import java.util.UUID;
 public class SqlDataAccess implements DataAccess{
 
     private UUID UUID;
+    private final Gson gson = new Gson();
 
     public SqlDataAccess(){
         try {
@@ -26,9 +30,9 @@ public class SqlDataAccess implements DataAccess{
         try (var conn = DatabaseManager.getConnection();
              var stmt = conn.createStatement()) {
 
-            stmt.executeUpdate("DELETE FROM auth");
-            stmt.executeUpdate("DELETE FROM user");
-            stmt.executeUpdate("DELETE FROM game");
+            stmt.executeUpdate("DELETE FROM authData");
+            stmt.executeUpdate("DELETE FROM userData");
+            stmt.executeUpdate("DELETE FROM gameData");
         } catch (SQLException e) {
             throw new DataAccessException("Error clearing database", e);
         }
@@ -37,7 +41,7 @@ public class SqlDataAccess implements DataAccess{
 
     @Override
     public void createUser(UserData user) throws DataAccessException {
-        var sql = "INSERT INTO user (username, password, email) VALUES (?, ?, ?)";
+        var sql = "INSERT INTO userData (username, password, email) VALUES (?, ?, ?)";
         try (var conn = DatabaseManager.getConnection();
              var ps = conn.prepareStatement(sql)) {
 
@@ -55,7 +59,7 @@ public class SqlDataAccess implements DataAccess{
 
     @Override
     public UserData getUser(String username) throws DataAccessException {
-        var sql = "SELECT username, password, email FROM user WHERE username=?";
+        var sql = "SELECT username, password, email FROM userData WHERE username=?";
         try (var conn = DatabaseManager.getConnection();
              var ps = conn.prepareStatement(sql)) {
 
@@ -80,7 +84,7 @@ public class SqlDataAccess implements DataAccess{
     @Override
     public String createAuth(String username) throws DataAccessException {
         var token = UUID.randomUUID().toString();
-        var sql = "INSERT INTO auth (authToken, username) VALUES (?, ?)";
+        var sql = "INSERT INTO authData (authToken, username) VALUES (?, ?)";
         try (var conn = DatabaseManager.getConnection();
              var ps = conn.prepareStatement(sql)) {
 
@@ -95,7 +99,7 @@ public class SqlDataAccess implements DataAccess{
 
     @Override
     public AuthData getAuth(String authToken) throws DataAccessException {
-        var sql = "SELECT authToken, username FROM auth WHERE authToken=?";
+        var sql = "SELECT authToken, username FROM authData WHERE authToken=?";
         try (var conn = DatabaseManager.getConnection();
              var ps = conn.prepareStatement(sql)) {
 
@@ -117,7 +121,7 @@ public class SqlDataAccess implements DataAccess{
         try (var conn = DatabaseManager.getConnection();
              var stmt = conn.createStatement()) {
 
-            stmt.executeUpdate("DELETE authToken FROM auth");
+            stmt.executeUpdate("DELETE authToken FROM authData");
         } catch (SQLException e) {
             throw new DataAccessException("Error clearing database", e);
         } catch (DataAccessException e) {
@@ -128,7 +132,7 @@ public class SqlDataAccess implements DataAccess{
 
     @Override
     public void createGame(GameData game) throws DataAccessException {
-        var sql = "INSERT INTO game (gameName, whiteUsername, blackUsername, gameJSON) VALUES (?, ?, ?, ?)";
+        var sql = "INSERT INTO gameData (gameName, whiteUsername, blackUsername, gameJSON) VALUES (?, ?, ?, ?)";
         try (var conn = DatabaseManager.getConnection();
              var ps = conn.prepareStatement(sql)) {
 
@@ -144,9 +148,36 @@ public class SqlDataAccess implements DataAccess{
 
 
     @Override
-    public GameData getGame(int gameID) {
-        return null;
+    public GameData getGame(int gameID) throws Exception {
+        var sql = "SELECT * FROM gameData WHERE gameID = ?";
+
+        try (var conn = DatabaseManager.getConnection();
+             var ps = conn.prepareStatement(sql)) {
+
+            ps.setInt(1, gameID);
+
+            try (var rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    String gameJson = rs.getString("gameJSON");
+                    ChessGame gameObj = gson.fromJson(gameJson, ChessGame.class);
+
+                    return new GameData(
+                            rs.getInt("gameID"),
+                            rs.getString("gameName"),
+                            rs.getString("whiteUsername"),
+                            rs.getString("blackUsername"),
+                            gameObj
+                    );
+                } else {
+                    return null;
+                }
+            }
+
+        } catch (SQLException e) {
+            throw new DataAccessException("Error reading game from database", e);
+        }
     }
+
 
     @Override
     public Iterable<GameData> listGames() {

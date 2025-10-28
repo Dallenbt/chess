@@ -33,7 +33,7 @@ public class GameService {
         }
         int id = Math.abs(UUID.randomUUID().hashCode());
         ChessGame board = new ChessGame();
-        GameData game = new GameData(id, null, null, gameName,board);
+        GameData game = new GameData(id, null, null, gameName, board);
         dataAccess.createGame(game);
         return game;
     }
