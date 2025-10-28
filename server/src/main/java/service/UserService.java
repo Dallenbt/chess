@@ -4,6 +4,7 @@ import dataaccess.DataAccess;
 import dataaccess.DataAccessException;
 import datamodel.AuthData;
 import datamodel.UserData;
+import org.mindrot.jbcrypt.BCrypt;
 
 public class UserService {
     private final DataAccess dataAccess;
@@ -19,7 +20,9 @@ public class UserService {
         if (user.username() == null || user.password() == null || user.email() == null) {
             throw new DataAccessException("Bad Request");
         }
-        dataAccess.createUser(user);
+        String hashedPassword = BCrypt.hashpw(user.password(), BCrypt.gensalt());
+        var encryptedUser = new UserData(user.username(), user.email(), hashedPassword);
+        dataAccess.createUser(encryptedUser);
         return new AuthData(user.username(), dataAccess.createAuth(user.username()));
     }
 
@@ -32,8 +35,9 @@ public class UserService {
         if (existingUser == null) {
             throw new Exception("User does not exist");
         }
-
-        if (!existingUser.password().equals(user.password())) {
+        var hashedPassword = dataAccess.getUser(user.username()).password();
+        boolean validPassword = BCrypt.checkpw(user.password(), hashedPassword);
+        if (!validPassword) {
             throw new Exception("Wrong Password");
         }
 
