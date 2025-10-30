@@ -13,17 +13,16 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.UUID;
 
-public class SqlDataAccess implements DataAccess{
+public class SqlDataAccess implements DataAccess {
 
     private UUID UUID;
     private final Gson gson = new Gson();
 
-    public SqlDataAccess(){
+    public SqlDataAccess() {
         try {
             DatabaseManager.createDatabase();
             DatabaseManager.createTables();
-        }
-        catch (Exception ex){
+        } catch (Exception ex) {
 
         }
     }
@@ -138,11 +137,12 @@ public class SqlDataAccess implements DataAccess{
         var sql = "INSERT INTO gameData (gameName, whiteUsername, blackUsername, gameJSON) VALUES (?, ?, ?, ?)";
         try (var conn = DatabaseManager.getConnection();
              var ps = conn.prepareStatement(sql)) {
+            String gameJson = gson.toJson(game.game());
 
             ps.setString(1, game.gameName());
             ps.setString(2, game.whiteUsername());
             ps.setString(3, game.blackUsername());
-            ps.setString(4, game.game().toString());
+            ps.setString(4, gameJson);
             ps.executeUpdate();
         } catch (SQLException e) {
             throw new DataAccessException("Error creating game", e);
@@ -185,8 +185,7 @@ public class SqlDataAccess implements DataAccess{
     @Override
     public Iterable<GameData> listGames() throws DataAccessException {
         var sql = "SELECT * FROM gameData";
-
-        var gameList = new ArrayList<GameData>();
+        var games = new ArrayList<GameData>();
 
         try (var conn = DatabaseManager.getConnection();
              var ps = conn.prepareStatement(sql);
@@ -196,27 +195,45 @@ public class SqlDataAccess implements DataAccess{
                 String gameJson = rs.getString("gameJSON");
                 ChessGame gameObj = gson.fromJson(gameJson, ChessGame.class);
 
-                var gameData = new GameData(
+                games.add(new GameData(
                         rs.getInt("gameID"),
                         rs.getString("gameName"),
                         rs.getString("whiteUsername"),
                         rs.getString("blackUsername"),
                         gameObj
-                );
-
-                gameList.add(gameData);
+                ));
             }
-
-            return gameList;
 
         } catch (SQLException e) {
             throw new DataAccessException("Error reading games from database", e);
         }
+
+        return games;
     }
 
 
     @Override
-    public void updateGame(GameData game) {
+    public void updateGame(GameData game) throws DataAccessException {
+        var sql = """
+                UPDATE gameData
+                SET gameName = ?, whiteUsername = ?, blackUsername = ?, gameJSON = ?
+                WHERE gameID = ?
+                """;
 
+        try (var conn = DatabaseManager.getConnection();
+             var ps = conn.prepareStatement(sql)) {
+
+            String gameJson = gson.toJson(game.game());
+
+            ps.setString(1, game.gameName());
+            ps.setString(2, game.whiteUsername());
+            ps.setString(3, game.blackUsername());
+            ps.setString(4, gameJson);
+            ps.setInt(5, game.gameID());
+
+
+        } catch (SQLException e) {
+            throw new DataAccessException("Error updating game", e);
+        }
     }
 }
