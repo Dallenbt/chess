@@ -32,6 +32,8 @@ public class DatabaseManager {
     public static void createTables() throws SQLException {
         try (var conn = DatabaseManager.getConnection()) {
             try (var stmt = conn.createStatement()) {
+
+                // User table
                 stmt.executeUpdate("""
                 CREATE TABLE IF NOT EXISTS userData (
                     username VARCHAR(255) PRIMARY KEY,
@@ -40,21 +42,25 @@ public class DatabaseManager {
                 );
             """);
 
+                // Auth table (corrected foreign key)
                 stmt.executeUpdate("""
                 CREATE TABLE IF NOT EXISTS authData (
                     authToken VARCHAR(255) PRIMARY KEY,
                     username VARCHAR(255),
-                    FOREIGN KEY (username) REFERENCES user(username) ON DELETE CASCADE
+                    FOREIGN KEY (username) REFERENCES userData(username) ON DELETE CASCADE
                 );
             """);
 
+                // Game table
                 stmt.executeUpdate("""
                 CREATE TABLE IF NOT EXISTS gameData (
                     gameID INT AUTO_INCREMENT PRIMARY KEY,
-                    gameName VARCHAR(255),
                     whiteUsername VARCHAR(255),
                     blackUsername VARCHAR(255),
-                    gameJSON TEXT
+                    gameName VARCHAR(255),
+                    gameJSON TEXT,
+                    FOREIGN KEY (whiteUsername) REFERENCES userData(username) ON DELETE SET NULL,
+                    FOREIGN KEY (blackUsername) REFERENCES userData(username) ON DELETE SET NULL
                 );
             """);
             }

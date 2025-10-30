@@ -90,14 +90,14 @@ class SqlDataAccessTest {
     @Test
     void updateGamePositive() throws Exception {
         DataAccess db = new SqlDataAccess();
-        var game = new GameData(1, "Old Name", "white", "black", new ChessGame());
+        var game = new GameData(1, "white", "black", "old", new ChessGame());
         db.createGame(game);
 
-        var updated = new GameData(1, "New Name", "white", "black", new ChessGame());
+        var updated = new GameData(1, "white", "black", "new", new ChessGame());
         db.updateGame(updated);
 
         var retrieved = db.getGame(1);
-        assertEquals("New Name", retrieved.gameName());
+        assertEquals("new", retrieved.gameName());
     }
     @Test
     void updateGameNegative() throws Exception {

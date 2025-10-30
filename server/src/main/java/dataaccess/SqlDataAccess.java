@@ -134,15 +134,16 @@ public class SqlDataAccess implements DataAccess {
 
     @Override
     public void createGame(GameData game) throws DataAccessException {
-        var sql = "INSERT INTO gameData (gameName, whiteUsername, blackUsername, gameJSON) VALUES (?, ?, ?, ?)";
+        var sql = "INSERT INTO gameData (gameID,  whiteUsername, blackUsername,gameName, gameJSON) VALUES (?, ?, ?, ?, ?)";
         try (var conn = DatabaseManager.getConnection();
              var ps = conn.prepareStatement(sql)) {
             String gameJson = gson.toJson(game.game());
 
-            ps.setString(1, game.gameName());
+            ps.setString(1, String.valueOf(game.gameID()));
             ps.setString(2, game.whiteUsername());
             ps.setString(3, game.blackUsername());
-            ps.setString(4, gameJson);
+            ps.setString(4, game.gameName());
+            ps.setString(5, gameJson);
             ps.executeUpdate();
         } catch (SQLException e) {
             throw new DataAccessException("Error creating game", e);
@@ -230,6 +231,10 @@ public class SqlDataAccess implements DataAccess {
             ps.setString(3, game.blackUsername());
             ps.setString(4, gameJson);
             ps.setInt(5, game.gameID());
+            int rows = ps.executeUpdate();
+            if (rows == 0) {
+                throw new DataAccessException("No game found with gameID: " + game.gameID());
+            }
 
 
         } catch (SQLException e) {
