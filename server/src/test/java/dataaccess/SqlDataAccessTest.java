@@ -5,6 +5,7 @@ import datamodel.GameData;
 import datamodel.UserData;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -48,8 +49,49 @@ class SqlDataAccessTest {
     }
 
     @Test
-    void createGame() {
+    void createGamePositive() throws Exception {
+        var db = new SqlDataAccess();
+        db.clear();
+
+        db.createUser(new UserData("bob", "hashedpw", "bob@email.com"));
+        db.createUser(new UserData("alice", "hashedpw", "alice@email.com"));
+        var chessGame = new ChessGame();
+
+
+        var game = new GameData(
+                0,
+                "bob",
+                "alice",
+                "Test Match",
+                chessGame
+        );
+
+
+        db.createGame(game);
+        var games = db.listGames();
+        assertNotNull(games);
+
+
+        var found = games.iterator().next();
+        assertEquals("Test Match", found.gameName());
+        assertNotNull(found.game());
     }
+
+
+    @Test
+    void createGameNegative() throws Exception {
+        var db = new SqlDataAccess();
+        db.clear();
+
+
+        var invalidGame = new GameData(0, null, "whitePlayer", "blackPlayer", new ChessGame());
+
+        assertThrows(DataAccessException.class, () -> {
+            db.createGame(invalidGame);
+        });
+    }
+
+
 
     @Test
     void getGame() {
@@ -58,20 +100,27 @@ class SqlDataAccessTest {
     @Test
     void listGamesPositive() throws Exception {
         DataAccess db = new SqlDataAccess();
-        var game1 = new GameData(1, "Training Match", "alice", "bob", new ChessGame());
-        var game2 = new GameData(2, "Ranked Match", "carol", "dave", new ChessGame());
+        db.clear();
+
+
+        db.createUser(new UserData("carol", "hashedpw", "carol@email.com"));
+        db.createUser(new UserData("alice", "hashedpw", "alice@email.com"));
+        var game1 = new GameData(0, "carol", "alice", "bob", new ChessGame());
+        var game2 = new GameData(0, "alice", "carol", "dave", new ChessGame());
+
 
         db.createGame(game1);
         db.createGame(game2);
-
-
         var games = db.listGames();
-
         assertNotNull(games, "listGames() should not return null");
-        var gameList = (List<GameData>) games;
-        assertEquals(2, gameList.size(), "Should return 2 games");
 
+
+        var gameList = new ArrayList<GameData>();
+        games.forEach(gameList::add);
+
+        assertEquals(2, gameList.size(), "Should return 2 games");
     }
+
 
     @Test
     void listGamesEmpty() throws Exception {
@@ -90,15 +139,25 @@ class SqlDataAccessTest {
     @Test
     void updateGamePositive() throws Exception {
         DataAccess db = new SqlDataAccess();
-        var game = new GameData(1, "white", "black", "old", new ChessGame());
+        db.clear();
+
+        db.createUser(new UserData("white", "hashedpw", "white@email.com"));
+        db.createUser(new UserData("black", "hashedpw", "black@email.com"));
+        var game = new GameData(0, "white", "black", "old", new ChessGame());
         db.createGame(game);
 
-        var updated = new GameData(1, "white", "black", "new", new ChessGame());
+
+        var insertedGame = db.listGames().iterator().next();
+        int gameID = insertedGame.gameID();
+        var updated = new GameData(gameID, "white", "black", "new", new ChessGame());
         db.updateGame(updated);
 
-        var retrieved = db.getGame(1);
+        var retrieved = db.getGame(gameID);
         assertEquals("new", retrieved.gameName());
+        assertEquals("white", retrieved.whiteUsername());
+        assertEquals("black", retrieved.blackUsername());
     }
+
     @Test
     void updateGameNegative() throws Exception {
         DataAccess db = new SqlDataAccess();
