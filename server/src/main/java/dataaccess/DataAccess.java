@@ -13,6 +13,6 @@ public interface DataAccess {
     void deleteAuth(String authToken) throws  Exception;
     void createGame (GameData game) throws DataAccessException;
     GameData getGame(int gameID) throws Exception;
-    Iterable<GameData> listGames();
+    Iterable<GameData> listGames() throws Exception;
     void updateGame(GameData game);
 }

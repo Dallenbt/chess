@@ -5,9 +5,12 @@ import datamodel.AuthData;
 import datamodel.GameData;
 import datamodel.UserData;
 import com.google.gson.Gson;
+import org.jetbrains.annotations.NotNull;
 
 
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.UUID;
 
 public class SqlDataAccess implements DataAccess{
@@ -180,9 +183,37 @@ public class SqlDataAccess implements DataAccess{
 
 
     @Override
-    public Iterable<GameData> listGames() {
-        return null;
+    public Iterable<GameData> listGames() throws DataAccessException {
+        var sql = "SELECT * FROM gameData";
+
+        var gameList = new ArrayList<GameData>();
+
+        try (var conn = DatabaseManager.getConnection();
+             var ps = conn.prepareStatement(sql);
+             var rs = ps.executeQuery()) {
+
+            while (rs.next()) {
+                String gameJson = rs.getString("gameJSON");
+                ChessGame gameObj = gson.fromJson(gameJson, ChessGame.class);
+
+                var gameData = new GameData(
+                        rs.getInt("gameID"),
+                        rs.getString("gameName"),
+                        rs.getString("whiteUsername"),
+                        rs.getString("blackUsername"),
+                        gameObj
+                );
+
+                gameList.add(gameData);
+            }
+
+            return gameList;
+
+        } catch (SQLException e) {
+            throw new DataAccessException("Error reading games from database", e);
+        }
     }
+
 
     @Override
     public void updateGame(GameData game) {
