@@ -119,17 +119,17 @@ public class SqlDataAccess implements DataAccess {
 
 
     @Override
-    public void deleteAuth(String authToken) throws Exception {
+    public void deleteAuth(String authToken) throws DataAccessException {
+        var sql = "DELETE FROM authData WHERE authToken=?";
         try (var conn = DatabaseManager.getConnection();
-             var stmt = conn.createStatement()) {
+             var ps = conn.prepareStatement(sql)) {
 
-            stmt.executeUpdate("DELETE authToken FROM authData");
+            ps.setString(1, authToken);
+            ps.executeUpdate();
+
         } catch (SQLException e) {
-            throw new DataAccessException("Error clearing database", e);
-        } catch (DataAccessException e) {
-            throw new RuntimeException(e);
+            throw new DataAccessException("Error deleting auth token", e);
         }
-
     }
 
     @Override
