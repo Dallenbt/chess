@@ -147,7 +147,6 @@ public class SqlDataAccess implements DataAccess {
 
             ps.executeUpdate();
 
-            // ✅ Get the auto-generated gameID from the database
             try (var rs = ps.getGeneratedKeys()) {
                 if (rs.next()) {
                     int generatedID = rs.getInt(1);

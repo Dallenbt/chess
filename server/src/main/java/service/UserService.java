@@ -21,7 +21,7 @@ public class UserService {
             throw new DataAccessException("Bad Request");
         }
         String hashedPassword = BCrypt.hashpw(user.password(), BCrypt.gensalt());
-        var encryptedUser = new UserData(user.username(), user.email(), hashedPassword);
+        var encryptedUser = new UserData(user.username(), hashedPassword, user.email());
         dataAccess.createUser(encryptedUser);
         return new AuthData(user.username(), dataAccess.createAuth(user.username()));
     }
