@@ -23,7 +23,6 @@ public class SqlDataAccess implements DataAccess {
             DatabaseManager.createTables();
         } catch (Exception ex) {
             throw new DataAccessException("Error making database", ex);
-
         }
     }
 
@@ -149,7 +148,7 @@ public class SqlDataAccess implements DataAccess {
                     int generatedID = rs.getInt(1);
                     return new GameData(generatedID, game.whiteUsername(), game.blackUsername(), game.gameName(), game.game());
                 } else {
-                    throw new DataAccessException("No gameID generated when creating game");
+                    throw new DataAccessException("Error no gameID generated when creating game");
                 }
             }
 
@@ -218,7 +217,6 @@ public class SqlDataAccess implements DataAccess {
         } catch (SQLException e) {
             throw new DataAccessException("Error reading games from database", e);
         }
-
         return games;
     }
 
@@ -243,10 +241,8 @@ public class SqlDataAccess implements DataAccess {
             ps.setInt(5, game.gameID());
             int rows = ps.executeUpdate();
             if (rows == 0) {
-                throw new DataAccessException("No game found with gameID: " + game.gameID());
+                throw new DataAccessException("Error no game found with gameID: " + game.gameID());
             }
-
-
         } catch (SQLException e) {
             throw new DataAccessException("Error updating game", e);
         }

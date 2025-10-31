@@ -34,7 +34,7 @@ public class Server {
         server = Javalin.create(config -> config.staticFiles.add("web"));
 
         // Register your endpoints and exception handlers here.
-        server.delete("db", ctx -> userService.clear()); //clear
+        server.delete("db", ctx -> clear(ctx)); //clear
         server.post("user", ctx -> register(ctx)); //register
         server.post("session", ctx -> login(ctx)); //login
         server.delete("session", ctx -> logout(ctx)); //logout
@@ -43,6 +43,16 @@ public class Server {
         server.put("game", ctx -> joinGame(ctx)); //join game
 
 
+    }
+
+    private void clear(Context ctx){
+        try{
+            userService.clear();
+        }
+        catch (Exception ex){
+            var msg = String.format("{ \"message\": \"Error: clearing data\" }", ex.getMessage());
+            ctx.status(500).result(msg);
+        }
     }
 
     private void register(Context ctx){
