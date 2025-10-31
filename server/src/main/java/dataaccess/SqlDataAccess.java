@@ -14,7 +14,7 @@ import java.util.UUID;
 
 public class SqlDataAccess implements DataAccess {
 
-    private UUID UUID;
+
     private final Gson gson = new Gson();
 
     public SqlDataAccess() throws DataAccessException {
