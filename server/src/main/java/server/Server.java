@@ -23,7 +23,12 @@ public class Server {
     private final GameService gameService;
 
     public Server() {
-        var dataAccess = new SqlDataAccess();
+        SqlDataAccess dataAccess = null;
+        try {
+            dataAccess = new SqlDataAccess();
+        } catch (DataAccessException e) {
+            throw new RuntimeException(e);
+        }
         userService = new UserService(dataAccess);
         gameService = new GameService(dataAccess);
         server = Javalin.create(config -> config.staticFiles.add("web"));

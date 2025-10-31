@@ -17,11 +17,12 @@ public class SqlDataAccess implements DataAccess {
     private UUID UUID;
     private final Gson gson = new Gson();
 
-    public SqlDataAccess() {
+    public SqlDataAccess() throws DataAccessException {
         try {
             DatabaseManager.createDatabase();
             DatabaseManager.createTables();
         } catch (Exception ex) {
+            throw new DataAccessException("Error making database", ex);
 
         }
     }
@@ -50,10 +51,8 @@ public class SqlDataAccess implements DataAccess {
             ps.setString(2, user.password());  // Make sure this is a hashed password
             ps.setString(3, user.email());
             ps.executeUpdate();
-        } catch (SQLException e) {
+        } catch (Exception e) {
             throw new DataAccessException("Error creating user", e);
-        } catch (DataAccessException e) {
-            throw new RuntimeException(e);
         }
     }
 
@@ -75,10 +74,8 @@ public class SqlDataAccess implements DataAccess {
                 }
                 return null;
             }
-        } catch (SQLException e) {
+        } catch (Exception e) {
             throw new DataAccessException("Error reading user", e);
-        } catch (DataAccessException e) {
-            throw new RuntimeException(e);
         }
     }
 
