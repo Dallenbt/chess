@@ -12,6 +12,7 @@ import io.javalin.http.Context;
 import service.GameService;
 import service.UserService;
 
+import java.lang.module.FindException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -49,17 +50,18 @@ public class Server {
 
             ctx.result(serilaizer.toJson(authData));
         }
-        catch (DataAccessException ex){
+        catch (RuntimeException ex){
             var msg = String.format("{ \"message\": \"Error: bad request\" }", ex.getMessage());
             ctx.status(400).result(msg);
+        }
+        catch (DataAccessException ex) {
+            ctx.status(500).result("{ \"message\": \"Error: server error\" }");
         }
         catch (Exception ex){
             var msg = String.format("{ \"message\": \"Error: already taken\" }", ex.getMessage());
             ctx.status(403).result(msg);
         }
-        catch (Throwable ex) {
-            ctx.status(500).result("{ \"message\": \"Error: server error\" }");
-        }
+
     }
     private void login(Context ctx){
         try {
@@ -70,17 +72,18 @@ public class Server {
             var authData = userService.login(user);
             ctx.result(serilaizer.toJson(authData));
         }
-        catch (DataAccessException ex){
+        catch (RuntimeException ex){
             var msg = String.format("{ \"message\": \"Error: bad request\" }", ex.getMessage());
             ctx.status(400).result(msg);
+        }
+        catch (DataAccessException ex) {
+            ctx.status(500).result("{ \"message\": \"Error: server error\" }");
         }
         catch (Exception ex){
             var msg = String.format("{ \"message\": \"Error: unauthorized\" }", ex.getMessage());
             ctx.status(401).result(msg);
         }
-        catch (Throwable ex) {
-            ctx.status(500).result("{ \"message\": \"Error: server error\" }");
-        }
+
     }
     private void logout(Context ctx) {
         try {
@@ -89,7 +92,7 @@ public class Server {
 
             userService.logout(authHeader);
             ctx.status(200).result("{}");
-        } catch (DataAccessException ex) {
+        } catch (RuntimeException ex) {
             ctx.status(401).result("{ \"message\": \"Error: unauthorized\" }");
         } catch (Exception ex) {
             ctx.status(500).result("{ \"message\": \"Error: server error\" }");
@@ -104,7 +107,7 @@ public class Server {
             HashMap<String, Iterable<GameData>> response = new HashMap<>();
             response.put("games", games);
             ctx.status(200).result(serializer.toJson(response));
-        } catch (DataAccessException ex) {
+        } catch (RuntimeException ex) {
             ctx.status(401).result("{ \"message\": \"Error: unauthorized\" }");
         } catch (Exception ex) {
             ctx.status(500).result("{ \"message\": \"Error: server error\" }");
@@ -122,17 +125,18 @@ public class Server {
             var game = gameService.createGame(auth, name);
             ctx.status(200).result(serializer.toJson(Map.of("gameID", game.gameID())));
         }
-        catch (DataAccessException ex){
+        catch (RuntimeException ex){
             var msg = String.format("{ \"message\": \"Error: unauthorized\" }", ex.getMessage());
             ctx.status(401).result(msg);
+        }
+        catch (DataAccessException ex) {
+            ctx.status(500).result("{ \"message\": \"Error: server error\" }");
         }
         catch (Exception ex){
             var msg = String.format("{ \"message\": \"Error: bad request\" }", ex.getMessage());
             ctx.status(400).result(msg);
         }
-        catch (Throwable ex) {
-            ctx.status(500).result("{ \"message\": \"Error: server error\" }");
-        }
+
 
     }
     private void joinGame(Context ctx){
@@ -146,7 +150,11 @@ public class Server {
             gameService.joinGame(auth, color, id);
             ctx.status(200).result("{}");
         }
-        catch (DataAccessException ex){
+        catch (NullPointerException ex){
+            var msg = String.format("{ \"message\": \"Error: bad request\" }", ex.getMessage());
+            ctx.status(400).result(msg);
+        }
+        catch (RuntimeException ex){
             var msg = String.format("{ \"message\": \"Error: unauthorized\" }", ex.getMessage());
             ctx.status(401).result(msg);
         }
@@ -154,12 +162,10 @@ public class Server {
             var msg = String.format("{ \"message\": \"Error: already taken\" }", ex.getMessage());
             ctx.status(403).result(msg);
         }
-        catch (Exception ex){
-            var msg = String.format("{ \"message\": \"Error: bad request\" }", ex.getMessage());
-            ctx.status(400).result(msg);
-        }
-        catch (Throwable ex) {
+        catch (DataAccessException ex) {
             ctx.status(500).result("{ \"message\": \"Error: server error\" }");
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
 
 

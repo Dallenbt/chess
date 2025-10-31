@@ -18,7 +18,7 @@ public class UserService {
             throw new Exception("Already Exists");
         }
         if (user.username() == null || user.password() == null || user.email() == null) {
-            throw new DataAccessException("Bad Request");
+            throw new RuntimeException("Bad Request");
         }
         String hashedPassword = BCrypt.hashpw(user.password(), BCrypt.gensalt());
         var encryptedUser = new UserData(user.username(), hashedPassword, user.email());
@@ -28,7 +28,7 @@ public class UserService {
 
     public AuthData login(UserData user) throws Exception {
         if (user.username() == null || user.password() == null) {
-            throw new DataAccessException("Bad Request");
+            throw new RuntimeException("Bad Request");
         }
 
         var existingUser = dataAccess.getUser(user.username());
@@ -54,7 +54,7 @@ public class UserService {
     public void logout(String authToken) throws Exception {
         var auth = dataAccess.getAuth(authToken);
         if (auth == null) {
-            throw new DataAccessException("Unauthorized");
+            throw new RuntimeException("Unauthorized");
         }
         dataAccess.deleteAuth(authToken);
     }

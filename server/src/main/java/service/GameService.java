@@ -5,6 +5,7 @@ import dataaccess.DataAccess;
 import dataaccess.DataAccessException;
 import datamodel.GameData;
 
+import java.lang.module.FindException;
 import java.util.HashMap;
 import java.util.UUID;
 
@@ -18,7 +19,7 @@ public class GameService {
     public Iterable<GameData> listGames(String authToken) throws Exception {
         var auth = dataAccess.getAuth(authToken);
         if (auth == null) {
-            throw new DataAccessException("Unauthorized");
+            throw new RuntimeException("Unauthorized");
         }
         return dataAccess.listGames();
     }
@@ -26,7 +27,7 @@ public class GameService {
     public GameData createGame(String authToken, String gameName) throws Exception {
         var auth = dataAccess.getAuth(authToken);
         if (auth == null) {
-            throw new DataAccessException("Unauthorized");
+            throw new RuntimeException("Unauthorized");
         }
         if (gameName == null){
             throw new Exception();
@@ -41,13 +42,13 @@ public class GameService {
         var auth = dataAccess.getAuth(authToken);
         var game = dataAccess.getGame(id);
         if (auth == null) {
-            throw new DataAccessException("Unauthorized");
+            throw new RuntimeException("Unauthorized");
         }
         if (game == null){
-            throw new Exception();
+            throw new NullPointerException();
         }
         if (!color.equalsIgnoreCase("WHITE") && !color.equalsIgnoreCase("BLACK")){
-            throw new Exception();
+            throw new NullPointerException();
         }
         if (game.whiteUsername() != null && game.blackUsername() != null) {
             throw new IllegalAccessException("Game is full");
