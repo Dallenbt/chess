@@ -33,20 +33,111 @@ class SqlDataAccessTest {
     }
 
     @Test
-    void getUser() {
+    void getUserPositive() throws Exception {
+        DataAccess db = new SqlDataAccess();
+        db.clear();
+
+        var user = new UserData("bob", "hashedpw", "bob@email.com");
+        db.createUser(user);
+
+        var retrieved = db.getUser("bob");
+        assertNotNull(retrieved);
+        assertEquals("bob", retrieved.username());
+        assertEquals("hashedpw", retrieved.password());
+        assertEquals("bob@email.com", retrieved.email());
     }
 
     @Test
-    void createAuth() {
+    void getUserNegative() throws Exception {
+        DataAccess db = new SqlDataAccess();
+        db.clear();
+
+        var retrieved = db.getUser("nonexistent");
+        assertNull(retrieved, "Nonexistent user should return null");
     }
 
     @Test
-    void getAuth() {
+    void createAuthAndGetAuthPositive() throws Exception {
+        DataAccess db = new SqlDataAccess();
+        db.clear();
+
+        db.createUser(new UserData("bob", "hashedpw", "bob@email.com"));
+        String token = db.createAuth("bob");
+
+        assertNotNull(token, "Auth token should not be null");
+
+        var authData = db.getAuth(token);
+        assertNotNull(authData);
+        assertEquals(token, authData.authToken());
+        assertEquals("bob", authData.username());
     }
 
     @Test
-    void deleteAuth() {
+    void createAuthNegative() throws Exception {
+        DataAccess db = new SqlDataAccess();
+        db.clear();
+
+        // Trying to create an auth token for a user that doesn't exist
+        assertThrows(DataAccessException.class, () -> {
+            db.createAuth("ghostUser");
+        });
     }
+
+    @Test
+    void deleteAuthPositive() throws Exception {
+        DataAccess db = new SqlDataAccess();
+        db.clear();
+
+        db.createUser(new UserData("bob", "hashedpw", "bob@email.com"));
+        String token = db.createAuth("bob");
+
+        var found = db.getAuth(token);
+        assertNotNull(found);
+
+        db.deleteAuth(token);
+        var afterDelete = db.getAuth(token);
+        assertNull(afterDelete, "Auth token should be deleted");
+    }
+
+    @Test
+    void deleteAuthNegative() throws Exception {
+        DataAccess db = new SqlDataAccess();
+        db.clear();
+
+        // Deleting a token that doesn’t exist should not crash
+        assertDoesNotThrow(() -> db.deleteAuth("nonexistent"));
+    }
+
+    @Test
+    void getGamePositive() throws Exception {
+        DataAccess db = new SqlDataAccess();
+        db.clear();
+
+        db.createUser(new UserData("white", "hashedpw", "white@email.com"));
+        db.createUser(new UserData("black", "hashedpw", "black@email.com"));
+        var game = new GameData(0, "white", "black", "Epic Battle", new ChessGame());
+        db.createGame(game);
+
+        var insertedGame = db.listGames().iterator().next();
+        var retrieved = db.getGame(insertedGame.gameID());
+
+        assertNotNull(retrieved);
+        assertEquals("Epic Battle", retrieved.gameName());
+        assertEquals("white", retrieved.whiteUsername());
+        assertEquals("black", retrieved.blackUsername());
+    }
+
+    @Test
+    void getGameNegative() throws Exception {
+        DataAccess db = new SqlDataAccess();
+        db.clear();
+
+        var game = db.getGame(9999);
+        assertNull(game, "Should return null for nonexistent game ID");
+    }
+
+
+
 
     @Test
     void createGamePositive() throws Exception {
@@ -93,9 +184,6 @@ class SqlDataAccessTest {
 
 
 
-    @Test
-    void getGame() {
-    }
 
     @Test
     void listGamesPositive() throws Exception {
