@@ -1,10 +1,8 @@
 package dataaccess;
 
-import chess.ChessGame;
 import datamodel.*;
 
 import java.util.HashMap;
-import java.util.Map;
 import java.util.UUID;
 
 
@@ -50,9 +48,10 @@ public class MemoryDataAccess implements DataAccess{
     }
 
     @Override
-    public void createGame(GameData game) {
+    public GameData createGame(GameData game) {
         games.put(game.gameID(), game);
 
+        return game;
     }
 
     @Override

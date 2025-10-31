@@ -5,12 +5,11 @@ import datamodel.AuthData;
 import datamodel.GameData;
 import datamodel.UserData;
 import com.google.gson.Gson;
-import org.jetbrains.annotations.NotNull;
 
 
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.UUID;
 
 public class SqlDataAccess implements DataAccess {
@@ -133,10 +132,11 @@ public class SqlDataAccess implements DataAccess {
     }
 
     @Override
-    public void createGame(GameData game) throws DataAccessException {
+    public GameData createGame(GameData game) throws DataAccessException {
         var sql = "INSERT INTO gameData (whiteUsername, blackUsername, gameName, gameJSON) VALUES (?, ?, ?, ?)";
+
         try (var conn = DatabaseManager.getConnection();
-             var ps = conn.prepareStatement(sql)) {
+             var ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
             String gameJson = gson.toJson(game.game());
 
@@ -147,10 +147,21 @@ public class SqlDataAccess implements DataAccess {
 
             ps.executeUpdate();
 
+            // ✅ Get the auto-generated gameID from the database
+            try (var rs = ps.getGeneratedKeys()) {
+                if (rs.next()) {
+                    int generatedID = rs.getInt(1);
+                    return new GameData(generatedID, game.whiteUsername(), game.blackUsername(), game.gameName(), game.game());
+                } else {
+                    throw new DataAccessException("No gameID generated when creating game");
+                }
+            }
+
         } catch (SQLException e) {
             throw new DataAccessException("Error creating game", e);
         }
     }
+
 
 
 

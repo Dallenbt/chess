@@ -31,11 +31,10 @@ public class GameService {
         if (gameName == null){
             throw new Exception();
         }
-        int id = Math.abs(UUID.randomUUID().hashCode());
         ChessGame board = new ChessGame();
-        GameData game = new GameData(id, null, null, gameName, board);
-        dataAccess.createGame(game);
-        return game;
+        GameData game = new GameData(0, null, null, gameName, board);
+        var madeGame = dataAccess.createGame(game);
+        return madeGame;
     }
 
     public void joinGame(String authToken, String color, int id) throws Exception{

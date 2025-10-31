@@ -33,6 +33,24 @@ class SqlDataAccessTest {
     }
 
     @Test
+    void createUserNegative() throws Exception {
+        DataAccess db = new SqlDataAccess();
+        db.clear();
+
+        var invalidUser = new UserData(null, "hashedpw", "noemail@email.com");
+        assertThrows(DataAccessException.class, () -> db.createUser(invalidUser),
+                "Should throw DataAccessException when username is null");
+
+        var validUser = new UserData("bob", "hashedpw", "bob@email.com");
+        db.createUser(validUser);
+
+        var duplicateUser = new UserData("bob", "hashedpw", "different@email.com");
+        assertThrows(DataAccessException.class, () -> db.createUser(duplicateUser),
+                "Should throw DataAccessException for duplicate username");
+    }
+
+
+    @Test
     void getUserPositive() throws Exception {
         DataAccess db = new SqlDataAccess();
         db.clear();
