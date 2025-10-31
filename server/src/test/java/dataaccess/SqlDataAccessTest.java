@@ -57,7 +57,7 @@ class SqlDataAccessTest {
     }
 
     @Test
-    void createAuthAndGetAuthPositive() throws Exception {
+    void createAuthPositive() throws Exception {
         DataAccess db = new SqlDataAccess();
         db.clear();
 
@@ -65,11 +65,6 @@ class SqlDataAccessTest {
         String token = db.createAuth("bob");
 
         assertNotNull(token, "Auth token should not be null");
-
-        var authData = db.getAuth(token);
-        assertNotNull(authData);
-        assertEquals(token, authData.authToken());
-        assertEquals("bob", authData.username());
     }
 
     @Test
@@ -77,11 +72,39 @@ class SqlDataAccessTest {
         DataAccess db = new SqlDataAccess();
         db.clear();
 
-        // Trying to create an auth token for a user that doesn't exist
+
         assertThrows(DataAccessException.class, () -> {
             db.createAuth("ghostUser");
         });
     }
+    @Test
+    void getAuthPositive() throws Exception {
+        DataAccess db = new SqlDataAccess();
+        db.clear();
+
+        db.createUser(new UserData("alice", "hashedpw", "alice@email.com"));
+        String token = db.createAuth("alice");
+
+        var retrieved = db.getAuth(token);
+
+
+        assertNotNull(retrieved, "getAuth() should return a record for a valid token");
+        assertEquals(token, retrieved.authToken(), "Auth token should match the one created");
+        assertEquals("alice", retrieved.username(), "Username should match the user who owns the token");
+    }
+
+    @Test
+    void getAuthNegative() throws Exception {
+        DataAccess db = new SqlDataAccess();
+        db.clear();
+
+        var retrieved = db.getAuth("fake-token-123");
+
+
+        assertNull(retrieved, "getAuth() should return null for a non-existent token");
+    }
+
+
 
     @Test
     void deleteAuthPositive() throws Exception {
@@ -104,7 +127,7 @@ class SqlDataAccessTest {
         DataAccess db = new SqlDataAccess();
         db.clear();
 
-        // Deleting a token that doesn’t exist should not crash
+
         assertDoesNotThrow(() -> db.deleteAuth("nonexistent"));
     }
 
