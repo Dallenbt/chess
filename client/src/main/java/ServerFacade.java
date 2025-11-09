@@ -7,12 +7,48 @@ import java.net.http.HttpRequest.BodyPublishers;
 import java.net.http.HttpResponse.BodyHandlers;
 
 
+
 public class ServerFacade {
     private final HttpClient client = HttpClient.newHttpClient();
     private final String serverUrl;
 
     public ServerFacade(String url) {
         serverUrl = url;
+    }
+
+    public void clear() throws ResponseException {
+        var request = buildRequest("DELETE", "/db", null);
+        sendRequest(request);
+    }
+
+    static class RegisterRequest {
+        String username;
+        String password;
+        String email;
+    }
+
+
+    public String register(RegisterRequest register) throws ResponseException {
+        var request = buildRequest("POST", "/user", register);
+        var response = sendRequest(request);
+        return handleResponse(response, String.class);
+    }
+
+    static class LoginRequest{
+        String username;
+        String password;
+    }
+
+    public String login(LoginRequest login) throws ResponseException {
+        var request = buildRequest("POST", "/session", login);
+        var response = sendRequest(request);
+        return handleResponse(response, String.class);
+    }
+
+    public String logout(String token) throws ResponseException {
+        var request = buildRequest("DELETE", "/session", token);
+        var response = sendRequest(request);
+        return handleResponse(response, String.class);
     }
 
 
