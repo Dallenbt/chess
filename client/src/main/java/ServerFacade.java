@@ -45,10 +45,9 @@ public class ServerFacade {
         return handleResponse(response, String.class);
     }
 
-    public String logout(String token) throws ResponseException {
-        var request = buildRequest("DELETE", "/session", token);
-        var response = sendRequest(request);
-        return handleResponse(response, String.class);
+    public void logout() throws ResponseException {
+        var request = buildRequest("DELETE", "/session", null);
+        sendRequest(request);
     }
 
 
