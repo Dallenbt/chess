@@ -57,6 +57,11 @@ public class ServerFacade {
         return handleResponse(response, Map.class);
     }
 
+    public void joinGame(Map player) throws ResponseException{
+        var request = buildRequest("PUT", "/game", player);
+        sendRequest(request);
+    }
+
 
 
 
