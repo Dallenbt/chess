@@ -10,6 +10,7 @@ import java.net.http.HttpRequest.BodyPublisher;
 import java.net.http.HttpRequest.BodyPublishers;
 import java.net.http.HttpResponse.BodyHandlers;
 import java.util.HashMap;
+import java.util.Map;
 
 
 public class ServerFacade {
@@ -50,10 +51,10 @@ public class ServerFacade {
         return handleResponse(response, HashMap.class);
     }
 
-    public int createGame(String gameName) throws ResponseException{
+    public Map<String, Integer> createGame(String gameName) throws ResponseException{
         var request = buildRequest("POST", "/game", gameName);
         var response = sendRequest(request);
-        return handleResponse(response, int.class);
+        return handleResponse(response, Map.class);
     }
 
 
