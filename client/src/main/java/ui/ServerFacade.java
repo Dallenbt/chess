@@ -1,5 +1,9 @@
+package ui;
 
 import com.google.gson.Gson;
+import datamodel.AuthData;
+import datamodel.UserData;
+
 import java.net.*;
 import java.net.http.*;
 import java.net.http.HttpRequest.BodyPublisher;
@@ -21,28 +25,18 @@ public class ServerFacade {
         sendRequest(request);
     }
 
-    static class RegisterRequest {
-        String username;
-        String password;
-        String email;
-    }
 
 
-    public String register(RegisterRequest register) throws ResponseException {
+    public AuthData register(UserData register) throws ResponseException {
         var request = buildRequest("POST", "/user", register);
         var response = sendRequest(request);
-        return handleResponse(response, String.class);
+        return handleResponse(response, AuthData.class);
     }
 
-    static class LoginRequest{
-        String username;
-        String password;
-    }
-
-    public String login(LoginRequest login) throws ResponseException {
+    public AuthData login(UserData login) throws ResponseException {
         var request = buildRequest("POST", "/session", login);
         var response = sendRequest(request);
-        return handleResponse(response, String.class);
+        return handleResponse(response, AuthData.class);
     }
 
     public void logout() throws ResponseException {
