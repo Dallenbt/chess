@@ -38,4 +38,10 @@ public class ServerFacadeTests {
         var authData = facade.register(user);
         assertTrue(authData.authToken().length() > 10);
     }
+
+    @Test
+    void registerFail(){
+        var user = new UserData("player1", null, "p1@email.com");
+         assertThrows(Exception.class, () -> facade.register(user));
+    }
 }

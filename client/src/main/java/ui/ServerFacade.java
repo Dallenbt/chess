@@ -9,7 +9,7 @@ import java.net.http.*;
 import java.net.http.HttpRequest.BodyPublisher;
 import java.net.http.HttpRequest.BodyPublishers;
 import java.net.http.HttpResponse.BodyHandlers;
-
+import java.util.HashMap;
 
 
 public class ServerFacade {
@@ -43,6 +43,20 @@ public class ServerFacade {
         var request = buildRequest("DELETE", "/session", null);
         sendRequest(request);
     }
+
+    public HashMap listGames() throws ResponseException {
+        var request = buildRequest("GET", "/game", null);
+        var response = sendRequest(request);
+        return handleResponse(response, HashMap.class);
+    }
+
+    public int createGame(String gameName) throws ResponseException{
+        var request = buildRequest("POST", "/game", gameName);
+        var response = sendRequest(request);
+        return handleResponse(response, int.class);
+    }
+
+
 
 
 
