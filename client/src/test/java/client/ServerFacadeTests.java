@@ -1,6 +1,7 @@
 package client;
 
 import chess.ChessGame;
+import datamodel.GameData;
 import datamodel.UserData;
 import org.junit.jupiter.api.*;
 import server.Server;
@@ -68,4 +69,53 @@ public class ServerFacadeTests {
         var badUser = new UserData("player1", null, "p1@email.com");
         assertThrows(Exception.class, () -> facade.login(badUser));
     }
+
+    @Test
+    void logout() throws Exception {
+        var user = new UserData("player1", "password", "p1@email.com");
+        facade.register(user);
+        facade.login(user);
+        assertDoesNotThrow(() -> facade.logout());
+    }
+
+    @Test
+    void logoutFail() throws Exception {
+        var badFacade = new ServerFacade("http://invalid-host");
+        var user = new UserData("player1", "password", "p1@email.com");
+        facade.register(user);
+        assertThrows(Exception.class, badFacade::logout);
+    }
+
+    @Test
+    void listGames() throws Exception {
+        var user = new UserData("player1", "password", "p1@email.com");
+        facade.register(user);
+        facade.login(user);
+        facade.createGame("game1");
+        facade.createGame("game2");
+        var games = facade.listGames();
+        assertFalse(games.isEmpty());
+    }
+
+    @Test
+    void listGamesFail() throws Exception {
+        assertThrows(Exception.class, () -> facade.listGames());
+    }
+
+    @Test
+    void createGame() throws Exception {
+        var user = new UserData("player1", "password", "p1@email.com");
+        var auth = facade.register(user);
+        facade.login(user);
+        var response = facade.createGame("My Test Game");
+        assertNotNull(response);
+        assertTrue(response.containsKey("gameID"));
+    }
+
+    @Test
+    void createGameFail() {
+        var user = new UserData("player1", "password", "p1@email.com");
+        assertThrows(Exception.class, () -> facade.createGame("Unauthorized Game"));
+    }
+
 }

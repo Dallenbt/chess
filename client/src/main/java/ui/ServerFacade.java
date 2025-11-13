@@ -16,49 +16,57 @@ import java.util.Map;
 public class ServerFacade {
     private final HttpClient client = HttpClient.newHttpClient();
     private final String serverUrl;
+    private String token;
 
     public ServerFacade(String url) {
         serverUrl = url;
     }
 
     public void clear() throws ResponseException {
-        var request = buildRequest("DELETE", "/db", null);
+        var request = buildRequest("DELETE", "/db", null, null);
         sendRequest(request);
     }
 
 
 
     public AuthData register(UserData register) throws ResponseException {
-        var request = buildRequest("POST", "/user", register);
+        var request = buildRequest("POST", "/user", register, null);
         var response = sendRequest(request);
         return handleResponse(response, AuthData.class);
     }
 
     public AuthData login(UserData login) throws ResponseException {
-        var request = buildRequest("POST", "/session", login);
+        var request = buildRequest("POST", "/session", login, null);
         var response = sendRequest(request);
-        return handleResponse(response, AuthData.class);
+        var data = handleResponse(response, AuthData.class);
+        assert data != null;
+        this.token = data.authToken();
+        return data;
     }
 
     public void logout() throws ResponseException {
-        var request = buildRequest("DELETE", "/session", null);
+        var request = buildRequest("DELETE", "/session", null, token);
         sendRequest(request);
     }
 
     public HashMap listGames() throws ResponseException {
-        var request = buildRequest("GET", "/game", null);
+        var request = buildRequest("GET", "/game", null, token);
         var response = sendRequest(request);
         return handleResponse(response, HashMap.class);
     }
 
-    public Map<String, Integer> createGame(String gameName) throws ResponseException{
-        var request = buildRequest("POST", "/game", gameName);
+    public Map<String, Integer> createGame(String gameName) throws ResponseException {
+        record CreateGameRequest(String gameName) {}
+        var requestBody = new CreateGameRequest(gameName);
+        var request = buildRequest("POST", "/game", requestBody, token);
         var response = sendRequest(request);
-        return handleResponse(response, Map.class);
+        return (Map<String, Integer>) handleResponse(response, Map.class);
     }
 
+
+
     public void joinGame(Map player) throws ResponseException{
-        var request = buildRequest("PUT", "/game", player);
+        var request = buildRequest("PUT", "/game", player, token);
         sendRequest(request);
     }
 
@@ -66,15 +74,22 @@ public class ServerFacade {
 
 
 
-    private HttpRequest buildRequest(String method, String path, Object body) {
-        var request = HttpRequest.newBuilder()
+    private HttpRequest buildRequest(String method, String path, Object body, String authToken) {
+        var builder = HttpRequest.newBuilder()
                 .uri(URI.create(serverUrl + path))
                 .method(method, makeRequestBody(body));
+
         if (body != null) {
-            request.setHeader("Content-Type", "application/json");
+            builder.setHeader("Content-Type", "application/json");
         }
-        return request.build();
+
+        if (authToken != null) {
+            builder.setHeader("Authorization", authToken);
+        }
+
+        return builder.build();
     }
+
 
     private BodyPublisher makeRequestBody(Object request) {
         if (request != null) {
