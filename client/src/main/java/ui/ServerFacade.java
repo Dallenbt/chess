@@ -55,20 +55,23 @@ public class ServerFacade {
         return handleResponse(response, HashMap.class);
     }
 
-    public Map<String, Integer> createGame(String gameName) throws ResponseException {
+    public Map<String, Double> createGame(String gameName) throws ResponseException {
         record CreateGameRequest(String gameName) {}
         var requestBody = new CreateGameRequest(gameName);
         var request = buildRequest("POST", "/game", requestBody, token);
         var response = sendRequest(request);
-        return (Map<String, Integer>) handleResponse(response, Map.class);
+        return (Map<String, Double>) handleResponse(response, Map.class);
     }
 
 
 
-    public void joinGame(Map player) throws ResponseException{
-        var request = buildRequest("PUT", "/game", player, token);
+    public void joinGame(String playerColor, Double gameID) throws ResponseException {
+        record JoinGameRequest(String playerColor, Double gameID) {}
+        var requestBody = new JoinGameRequest(playerColor, gameID);
+        var request = buildRequest("PUT", "/game", requestBody, token);
         sendRequest(request);
     }
+
 
 
 

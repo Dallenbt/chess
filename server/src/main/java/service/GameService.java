@@ -42,7 +42,7 @@ public class GameService {
         if (game == null){
             throw new NullPointerException();
         }
-        if (!color.equalsIgnoreCase("WHITE") && !color.equalsIgnoreCase("BLACK")){
+        if (color == null ||!color.equalsIgnoreCase("WHITE") && !color.equalsIgnoreCase("BLACK")){
             throw new NullPointerException();
         }
         if (game.whiteUsername() != null && game.blackUsername() != null) {

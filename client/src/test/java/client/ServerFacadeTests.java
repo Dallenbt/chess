@@ -8,6 +8,9 @@ import server.Server;
 import ui.ResponseException;
 import ui.ServerFacade;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 
@@ -105,7 +108,7 @@ public class ServerFacadeTests {
     @Test
     void createGame() throws Exception {
         var user = new UserData("player1", "password", "p1@email.com");
-        var auth = facade.register(user);
+        facade.register(user);
         facade.login(user);
         var response = facade.createGame("My Test Game");
         assertNotNull(response);
@@ -116,6 +119,22 @@ public class ServerFacadeTests {
     void createGameFail() {
         var user = new UserData("player1", "password", "p1@email.com");
         assertThrows(Exception.class, () -> facade.createGame("Unauthorized Game"));
+    }
+
+    @Test
+    void joinGame() throws Exception {
+        var user = new UserData("player1", "password", "p1@email.com");
+        facade.register(user);
+        facade.login(user);
+        var response = facade.createGame("Game1");
+        assertDoesNotThrow(() -> facade.joinGame("WHITE", response.get("gameID")));
+    }
+
+    @Test
+    void joinGameFail() throws Exception{
+        var badFacade = new ServerFacade("http://invalid-host");
+        assertThrows(Exception.class, () -> badFacade.joinGame("WHITE", 1.0));
+
     }
 
 }
