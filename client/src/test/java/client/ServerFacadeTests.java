@@ -31,6 +31,14 @@ public class ServerFacadeTests {
         server.stop();
     }
 
+    @Test
+    void clear() throws Exception {
+        var user = new UserData("player1", "password", "p1@email.com");
+        facade.register(user);
+        facade.clear();
+        assertThrows(Exception.class, () -> facade.login(user));
+    }
+
 
     @Test
     void register() throws Exception {
