@@ -44,4 +44,20 @@ public class ServerFacadeTests {
         var user = new UserData("player1", null, "p1@email.com");
          assertThrows(Exception.class, () -> facade.register(user));
     }
+
+    @Test
+    void login() throws Exception {
+        var user = new UserData("player1", "password", "p1@email.com");
+        facade.register(user);
+        var authData = facade.login(user);
+        assertTrue(authData.authToken().length() > 10);
+    }
+
+    @Test
+    void loginFail() throws Exception {
+        var user = new UserData("player1", "password", "p1@email.com");
+        facade.register(user);
+        var badUser = new UserData("player1", null, "p1@email.com");
+        assertThrows(Exception.class, () -> facade.login(badUser));
+    }
 }
