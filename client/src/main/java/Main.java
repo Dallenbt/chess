@@ -17,6 +17,13 @@ public class Main {
                     System.out.printf("Unable to start server: %s%n", ex.getMessage());
                 }
             }
+            if(state == State.LOGGEDIN){
+                try{
+                    new LoggedInClient(serverUrl).run();
+                } catch (Exception ex) {
+                    System.out.printf("Had trouble logging you in: %s%n", ex.getMessage());
+                }
+            }
         }
     }
 }

@@ -2,7 +2,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Scanner;
 
-import com.google.gson.Gson;
 import datamodel.UserData;
 import ui.*;
 
@@ -10,20 +9,21 @@ import ui.*;
 
 
 
-public class LoggedOutClient {
+public class LoggedInClient {
     private final ServerFacade server;
     private final HashMap<String, String> emails = new HashMap<>();
 
-    public LoggedOutClient(String serverUrl) throws ResponseException {
+    public LoggedInClient(String serverUrl) throws ResponseException {
         server = new ServerFacade(serverUrl);
     }
 
     public void run() {
-        System.out.println("Hello! Ready to play chess? Type help to get started.");
+        System.out.println("Alright time to get started!");
+        System.out.println(help());
 
         Scanner scanner = new Scanner(System.in);
         var result = "";
-        while (Main.state == State.LOGGEDOUT){
+        while (Main.state == State.LOGGEDIN){
             printPrompt();
             String line = scanner.nextLine();
 
@@ -40,7 +40,7 @@ public class LoggedOutClient {
 
 
     private void printPrompt() {
-        System.out.print("\n" + EscapeSequences.RESET + "[LOGGED_OUT]>>> " + EscapeSequences.GREEN);
+        System.out.print("\n" + EscapeSequences.RESET + "[LOGGED_IN]>>> " + EscapeSequences.GREEN);
     }
 
 
@@ -68,10 +68,8 @@ public class LoggedOutClient {
                 Main.state = State.LOGGEDIN;
                 return String.format("You signed in as %s.", params[0]);
             }
-        }catch (ArrayIndexOutOfBoundsException ex) {
+        }catch (Exception ex) {
             return "Expected: <Username> <Password>";
-        } catch (Exception e) {
-            return "Incorrect Username or Password";
         }
         return "";
     }
@@ -84,11 +82,8 @@ public class LoggedOutClient {
                 server.register(user);
                 return String.format("Nice to meet you %s!", params[0]);
             }
-        }catch (NullPointerException ex) {
-            return  "Sorry that Username is taken, try a different one!";
-       }
-        catch (Exception ex){
-            return "Expected: <Username> <Password>";
+        }catch (Exception ex) {
+            return  "Expected: <Username> <Password> <Email>";
         }
         return "";
     }
