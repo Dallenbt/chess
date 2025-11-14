@@ -1,6 +1,9 @@
+import datamodel.AuthData;
+
 public class Main {
 
     public static State state = State.LOGGEDOUT;
+    public static AuthData tokens = new AuthData(null, null);
 
     public static void main(String[] args) {
         System.out.println("♕ 240 Chess Client ♕");

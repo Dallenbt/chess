@@ -64,7 +64,7 @@ public class LoggedOutClient {
         try {
             if (params.length == 2) {
                 var user = new UserData(params[0], params[1], emails.get(params[0]));
-                server.login(user);
+                Main.tokens = server.login(user);
                 Main.state = State.LOGGEDIN;
                 return String.format("You signed in as %s.", params[0]);
             }

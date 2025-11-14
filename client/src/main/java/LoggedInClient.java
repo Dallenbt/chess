@@ -2,6 +2,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Scanner;
 
+import datamodel.GameData;
 import datamodel.UserData;
 import ui.*;
 
@@ -11,10 +12,10 @@ import ui.*;
 
 public class LoggedInClient {
     private final ServerFacade server;
-    private final HashMap<String, String> emails = new HashMap<>();
 
     public LoggedInClient(String serverUrl) throws ResponseException {
         server = new ServerFacade(serverUrl);
+        server.token = Main.tokens.authToken();
     }
 
     public void run() {
@@ -52,6 +53,7 @@ public class LoggedInClient {
             return switch (cmd) {
                 case "logout" -> logout(params);
                 case "create" -> create(params);
+                case "list" -> list(params);
                 case "quit" -> quit();
                 default -> help();
             };
@@ -67,18 +69,23 @@ public class LoggedInClient {
     }
 
     public String create(String... params) throws ResponseException {
-        try {
-            if (params.length == 1) {
-                var user = new UserData(params[0], params[1], params[2]);
-                emails.put(params[0], params[2]);
-                server.register(user);
-                return String.format("Nice to meet you %s!", params[0]);
+      //  try {
+            if (params.length >= 1) {
+                server.createGame(params[0]);
+                return String.format("%s has been made go and play it now!", params[0]);
             }
-        }catch (Exception ex) {
-            return  "Expected: <Username> <Password> <Email>";
-        }
+     //   }catch (Exception ex) {
+   //         return  "Expected: <GameName>";
+ //       }
         return "";
     }
+
+    public String list(String... params) throws ResponseException {
+        var games = server.listGames();
+        return String.valueOf(games);
+
+    }
+
 
     public String quit() throws ResponseException {
         Main.state = State.EXIT;

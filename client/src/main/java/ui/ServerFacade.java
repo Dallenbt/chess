@@ -16,7 +16,7 @@ import java.util.Map;
 public class ServerFacade {
     private final HttpClient client = HttpClient.newHttpClient();
     private final String serverUrl;
-    private String token;
+    public String token;
 
     public ServerFacade(String url) {
         serverUrl = url;
