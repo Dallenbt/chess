@@ -12,7 +12,7 @@ import ui.*;
 
 public class LoggedOutClient {
     private final ServerFacade server;
-    private HashMap<String, String> emails = new HashMap<>();
+    private final HashMap<String, String> emails = new HashMap<>();
 
     public LoggedOutClient(String serverUrl) throws ResponseException {
         server = new ServerFacade(serverUrl);
@@ -40,7 +40,7 @@ public class LoggedOutClient {
 
 
     private void printPrompt() {
-        System.out.print("\n" + EscapeSequences.RESET + ">>> " + EscapeSequences.GREEN);
+        System.out.print("\n" + EscapeSequences.RESET + "[LOGGED_OUT]>>> " + EscapeSequences.GREEN);
     }
 
 
@@ -61,23 +61,31 @@ public class LoggedOutClient {
     }
 
     public String logIn(String... params) throws ResponseException {
-        if (params.length >= 1) {
-            Main.state = State.LOGGEDIN;
-            var user = new UserData(params[0], params[1], emails.get(params[0]));
-            server.login(user);
-            return String.format("You signed in as %s.", params[0]);
+        try {
+            if (params.length >= 1) {
+                var user = new UserData(params[0], params[1], emails.get(params[0]));
+                server.login(user);
+                Main.state = State.LOGGEDIN;
+                return String.format("You signed in as %s.", params[0]);
+            }
+        }catch (Exception ex) {
+            return "Expected: <Username> <Password>";
         }
-        throw new ResponseException(ResponseException.Code.ClientError, "Expected: <Username> <Password>");
+        return "";
     }
 
     public String register(String... params) throws ResponseException {
-        if (params.length >= 2) {
-            var user = new UserData(params[0], params[1], params[2]);
-            emails.put(params[0], params[2]);
-            server.register(user);
-            return String.format("Nice to meet you %s!", params[0]);
+        try {
+            if (params.length >= 2) {
+                var user = new UserData(params[0], params[1], params[2]);
+                emails.put(params[0], params[2]);
+                server.register(user);
+                return String.format("Nice to meet you %s!", params[0]);
+            }
+        }catch (Exception ex) {
+            return  "Expected: <Username> <Password> <Email>";
         }
-        throw new ResponseException(ResponseException.Code.ClientError, "Expected: <Username> <Password> <Email>");
+        return "";
     }
 
     public String quit() throws ResponseException {
