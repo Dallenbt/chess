@@ -2,9 +2,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Scanner;
 
-import chess.ChessGame;
 import datamodel.GameData;
-import datamodel.UserData;
 import ui.*;
 
 
@@ -13,6 +11,7 @@ import ui.*;
 
 public class LoggedInClient {
     private final ServerFacade server;
+    public HashMap<Integer, Integer> idList = new HashMap<Integer, Integer>();
 
     public LoggedInClient(String serverUrl) throws ResponseException {
         server = new ServerFacade(serverUrl);
@@ -55,6 +54,7 @@ public class LoggedInClient {
                 case "logout" -> logout(params);
                 case "create" -> create(params);
                 case "list" -> list(params);
+                case "join" -> join(params);
                 case "quit" -> quit();
                 default -> help();
             };
@@ -71,7 +71,7 @@ public class LoggedInClient {
 
     public String create(String... params) throws ResponseException {
         try {
-            if (params.length >= 1) {
+            if (params.length == 1) {
                 server.createGame(params[0]);
                 return String.format("%s has been made go and play it now!", params[0]);
             }
@@ -86,7 +86,6 @@ public class LoggedInClient {
         var games = grab.get("games");
         StringBuilder sb = new StringBuilder();
         sb.append("Games:\n");
-        var idList = new HashMap<Integer, Integer>();
 
         int number = 1;
         for (GameData g : games) {
@@ -106,6 +105,19 @@ public class LoggedInClient {
         }
 
         return sb.toString();
+    }
+
+    public String join(String... params) throws ResponseException {
+        try {
+            if (params.length == 2) {
+                var gameID = idList.get(params[0]);
+                server.joinGame(params[1], Double.valueOf(gameID));
+                return String.format("%s has been made go and play it now!", params[0]);
+            }
+        }catch (Exception ex) {
+            return  "Expected: <GameName>";
+        }
+        return "";
     }
 
 
