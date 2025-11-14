@@ -86,21 +86,22 @@ public class LoggedInClient {
         var games = grab.get("games");
         StringBuilder sb = new StringBuilder();
         sb.append("Games:\n");
+        var idList = new HashMap<Integer, Integer>();
 
         int number = 1;
         for (GameData g : games) {
-            String white = g.whiteUsername() == null ? "—" : g.whiteUsername();
-            String black = g.blackUsername() == null ? "—" : g.blackUsername();
+            String white = g.whiteUsername() == null ? " none" : g.whiteUsername();
+            String black = g.blackUsername() == null ? " none" : g.blackUsername();
 
             sb.append(number)
                     .append(". ")
                     .append(g.gameName())
-                    .append(" (white=")
+                    .append(" (white =")
                     .append(white)
-                    .append(", black=")
+                    .append(", black =")
                     .append(black)
                     .append(")\n");
-
+            idList.put(number, g.gameID());
             number++;
         }
 
