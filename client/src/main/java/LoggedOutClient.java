@@ -2,7 +2,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Scanner;
 
-import com.google.gson.Gson;
+
 import datamodel.UserData;
 import ui.*;
 
@@ -14,7 +14,7 @@ public class LoggedOutClient {
     private final ServerFacade server;
     private final HashMap<String, String> emails = new HashMap<>();
 
-    public LoggedOutClient(String serverUrl) throws ResponseException {
+    public LoggedOutClient(String serverUrl){
         server = new ServerFacade(serverUrl);
     }
 
@@ -50,7 +50,7 @@ public class LoggedOutClient {
             String cmd = (tokens.length > 0) ? tokens[0] : "help";
             String[] params = Arrays.copyOfRange(tokens, 1, tokens.length);
             return switch (cmd) {
-                case "login" -> logIn(params);
+                case "login" -> login(params);
                 case "register" -> register(params);
                 case "quit" -> quit();
                 default -> help();
@@ -60,9 +60,9 @@ public class LoggedOutClient {
         }
     }
 
-    public String logIn(String... params) throws ResponseException {
+    public String login(String... params) throws ResponseException {
         try {
-            if (params.length >= 1) {
+            if (params.length == 2) {
                 var user = new UserData(params[0], params[1], emails.get(params[0]));
                 server.login(user);
                 Main.state = State.LOGGEDIN;
@@ -78,7 +78,7 @@ public class LoggedOutClient {
 
     public String register(String... params) throws ResponseException {
         try {
-            if (params.length >= 2) {
+            if (params.length == 3) {
                 var user = new UserData(params[0], params[1], params[2]);
                 emails.put(params[0], params[2]);
                 server.register(user);
@@ -95,7 +95,7 @@ public class LoggedOutClient {
 
     public String quit() throws ResponseException {
         Main.state = State.EXIT;
-        return new String("Goodbye!");
+        return "Goodbye!";
     }
 
 

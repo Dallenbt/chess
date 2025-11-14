@@ -18,8 +18,8 @@ public class LoggedInClient {
     }
 
     public void run() {
-        System.out.println("Alright time to get started!");
-        System.out.println(help());
+        System.out.println("Alright time to get started! Type help to see what you can do");
+
 
         Scanner scanner = new Scanner(System.in);
         var result = "";
@@ -50,8 +50,8 @@ public class LoggedInClient {
             String cmd = (tokens.length > 0) ? tokens[0] : "help";
             String[] params = Arrays.copyOfRange(tokens, 1, tokens.length);
             return switch (cmd) {
-                case "login" -> logIn(params);
-                case "register" -> register(params);
+                case "logout" -> logout(params);
+                case "create" -> create(params);
                 case "quit" -> quit();
                 default -> help();
             };
@@ -60,23 +60,15 @@ public class LoggedInClient {
         }
     }
 
-    public String logIn(String... params) throws ResponseException {
-        try {
-            if (params.length >= 1) {
-                var user = new UserData(params[0], params[1], emails.get(params[0]));
-                server.login(user);
-                Main.state = State.LOGGEDIN;
-                return String.format("You signed in as %s.", params[0]);
-            }
-        }catch (Exception ex) {
-            return "Expected: <Username> <Password>";
-        }
-        return "";
+    public String logout(String... params) throws ResponseException {
+        Main.state = State.LOGGEDOUT;
+        server.logout();
+        return "Play again soon!";
     }
 
-    public String register(String... params) throws ResponseException {
+    public String create(String... params) throws ResponseException {
         try {
-            if (params.length >= 2) {
+            if (params.length == 1) {
                 var user = new UserData(params[0], params[1], params[2]);
                 emails.put(params[0], params[2]);
                 server.register(user);
@@ -90,14 +82,17 @@ public class LoggedInClient {
 
     public String quit() throws ResponseException {
         Main.state = State.EXIT;
-        return new String("Goodbye!");
+        return "Goodbye!";
     }
 
 
     public String help() {
         return """
-                - register <Username> <Password> <Email>
-                - login <Username> <Password>
+                - create <GameName>
+                - list
+                - join <ID> [WHITE|BLACK]
+                - observe <ID>
+                - logout
                 - quit
                 - help
                 """;
