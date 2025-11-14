@@ -111,11 +111,19 @@ public class LoggedInClient {
         try {
             if (params.length == 2) {
                 var gameID = idList.get(params[0]);
+                if (params[1] == "WHITE"){
+                    DrawBoard.printBoard(true);
+                }
+                if (params[1] == "BLACK"){
+                    DrawBoard.printBoard(false);
+                }
+                else{
+                    throw new Exception();
+                }
                 server.joinGame(params[1], Double.valueOf(gameID));
-                return String.format("%s has been made go and play it now!", params[0]);
             }
         }catch (Exception ex) {
-            return  "Expected: <GameName>";
+            return  "Expected: <ID> [WHITE|BLACK]";
         }
         return "";
     }
