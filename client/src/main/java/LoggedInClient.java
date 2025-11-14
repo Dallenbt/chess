@@ -1,5 +1,6 @@
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Objects;
 import java.util.Scanner;
 
 import datamodel.GameData;
@@ -89,15 +90,15 @@ public class LoggedInClient {
 
         int number = 1;
         for (GameData g : games) {
-            String white = g.whiteUsername() == null ? " none" : g.whiteUsername();
-            String black = g.blackUsername() == null ? " none" : g.blackUsername();
+            String white = g.whiteUsername() == null ? "none" : g.whiteUsername();
+            String black = g.blackUsername() == null ? "none" : g.blackUsername();
 
             sb.append(number)
                     .append(". ")
                     .append(g.gameName())
-                    .append(" (white =")
+                    .append(" (white = ")
                     .append(white)
-                    .append(", black =")
+                    .append(", black = ")
                     .append(black)
                     .append(")\n");
             idList.put(number, g.gameID());
@@ -109,24 +110,38 @@ public class LoggedInClient {
 
     public String join(String... params) throws ResponseException {
         try {
-            if (params.length == 2) {
-                var gameID = idList.get(params[0]);
-                if (params[1] == "WHITE"){
-                    DrawBoard.printBoard(true);
-                }
-                if (params[1] == "BLACK"){
-                    DrawBoard.printBoard(false);
-                }
-                else{
-                    throw new Exception();
-                }
-                server.joinGame(params[1], Double.valueOf(gameID));
+            if (params.length != 2) {
+                return "Expected: <ID> [WHITE|BLACK]";
             }
-        }catch (Exception ex) {
-            return  "Expected: <ID> [WHITE|BLACK]";
+
+            int userInputID = (int) Integer.parseInt(params[0]);
+            Double gameID = Double.valueOf(idList.get(userInputID));
+
+            if (gameID == null) {
+                return "Invalid game ID";
+            }
+
+            String color = params[1].toLowerCase();
+            if (color.equals("white")) {
+                DrawBoard.printBoard(true);
+            } else if (color.equals("black")) {
+                DrawBoard.printBoard(false);
+            } else {
+                return "Expected: <ID> [WHITE|BLACK]";
+            }
+
+
+            server.joinGame(color.toUpperCase(), gameID);
+
+        } catch (NumberFormatException e) {
+            return "Game ID must be a number";
+        } catch (Exception e) {
+            return "An error occurred while joining the game";
         }
+
         return "";
     }
+
 
 
 
