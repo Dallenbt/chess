@@ -89,6 +89,7 @@ public class LoggedInClient {
 
     public String quit() throws ResponseException {
         Main.state = State.EXIT;
+        server.clear();
         return "Goodbye!";
     }
 
