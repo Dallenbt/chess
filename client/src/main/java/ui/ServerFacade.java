@@ -1,15 +1,19 @@
 package ui;
 
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import datamodel.AuthData;
+import datamodel.GameData;
 import datamodel.UserData;
 
+import java.lang.reflect.Type;
 import java.net.*;
 import java.net.http.*;
 import java.net.http.HttpRequest.BodyPublisher;
 import java.net.http.HttpRequest.BodyPublishers;
 import java.net.http.HttpResponse.BodyHandlers;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 
@@ -49,11 +53,13 @@ public class ServerFacade {
         sendRequest(request);
     }
 
-    public HashMap listGames() throws ResponseException {
+    public HashMap<String, List<GameData>> listGames() throws ResponseException {
         var request = buildRequest("GET", "/game", null, token);
         var response = sendRequest(request);
-        return handleResponse(response, HashMap.class);
+        Type type = new TypeToken<HashMap<String, List<GameData>>>() {}.getType();
+        return handleResponse(response, type);
     }
+
 
     public Map<String, Double> createGame(String gameName) throws ResponseException {
         record CreateGameRequest(String gameName) {}
@@ -127,6 +133,20 @@ public class ServerFacade {
 
         return null;
     }
+    private <T> T handleResponse(HttpResponse<String> response, java.lang.reflect.Type type) throws ResponseException {
+        var status = response.statusCode();
+        if (!isSuccessful(status)) {
+            var body = response.body();
+            if (body != null) {
+                throw ResponseException.fromJson(body);
+            }
+
+            throw new ResponseException(ResponseException.fromHttpStatusCode(status), "other failure: " + status);
+        }
+
+        return new Gson().fromJson(response.body(), type);
+    }
+
 
     private boolean isSuccessful(int status) {
         return status / 100 == 2;

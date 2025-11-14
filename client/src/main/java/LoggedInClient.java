@@ -2,6 +2,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Scanner;
 
+import chess.ChessGame;
 import datamodel.GameData;
 import datamodel.UserData;
 import ui.*;
@@ -69,22 +70,44 @@ public class LoggedInClient {
     }
 
     public String create(String... params) throws ResponseException {
-      //  try {
+        try {
             if (params.length >= 1) {
                 server.createGame(params[0]);
                 return String.format("%s has been made go and play it now!", params[0]);
             }
-     //   }catch (Exception ex) {
-   //         return  "Expected: <GameName>";
- //       }
+        }catch (Exception ex) {
+           return  "Expected: <GameName>";
+        }
         return "";
     }
 
     public String list(String... params) throws ResponseException {
-        var games = server.listGames();
-        return String.valueOf(games);
+        var grab = server.listGames();
+        var games = grab.get("games");
+        StringBuilder sb = new StringBuilder();
+        sb.append("Games:\n");
 
+        int number = 1;
+        for (GameData g : games) {
+            String white = g.whiteUsername() == null ? "—" : g.whiteUsername();
+            String black = g.blackUsername() == null ? "—" : g.blackUsername();
+
+            sb.append(number)
+                    .append(". ")
+                    .append(g.gameName())
+                    .append(" (white=")
+                    .append(white)
+                    .append(", black=")
+                    .append(black)
+                    .append(")\n");
+
+            number++;
+        }
+
+        return sb.toString();
     }
+
+
 
 
     public String quit() throws ResponseException {
