@@ -75,8 +75,8 @@ public class ServerFacade {
         record JoinGameRequest(String playerColor, Double gameID) {}
         var requestBody = new JoinGameRequest(playerColor, gameID);
         var request = buildRequest("PUT", "/game", requestBody, token);
-        var reponse = sendRequest(request);
-        handleResponse(reponse, null);
+        var response = sendRequest(request);
+        handleResponse(response, null);
     }
 
 

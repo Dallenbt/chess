@@ -76,10 +76,12 @@ public class LoggedInClient {
                 server.createGame(params[0]);
                 return String.format("%s has been made go and play it now!", params[0]);
             }
+            else{
+                throw new RuntimeException();
+            }
         }catch (Exception ex) {
            return  "Expected: <GameName>";
         }
-        return "";
     }
 
     public String list(String... params) throws ResponseException {
@@ -116,6 +118,9 @@ public class LoggedInClient {
 
             int userInputID = Integer.parseInt(params[0]);
             Double gameID = Double.valueOf(idList.get(userInputID));
+            if (gameID == null || gameID == 0.0){
+                throw new RuntimeException();
+            }
 
             String color = params[1].toLowerCase();
             server.joinGame(color.toUpperCase(), gameID);
@@ -131,8 +136,11 @@ public class LoggedInClient {
         } catch (NumberFormatException e) {
             return "Game ID must be a number";
         }
-        catch (Exception e) {
-            return "Game is full";
+        catch (NullPointerException e) {
+            return "Can't join that";
+        }
+        catch (Exception e){
+            return "Game does not exist";
         }
 
         return "";

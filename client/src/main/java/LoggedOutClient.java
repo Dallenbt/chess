@@ -68,12 +68,15 @@ public class LoggedOutClient {
                 Main.state = State.LOGGEDIN;
                 return String.format("You signed in as %s.", params[0]);
             }
-        }catch (ArrayIndexOutOfBoundsException ex) {
+            else{
+                throw new RuntimeException();
+            }
+        } catch (RuntimeException ex) {
             return "Expected: <Username> <Password>";
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             return "Incorrect Username or Password";
         }
-        return "";
     }
 
     public String register(String... params) throws ResponseException {
@@ -81,16 +84,19 @@ public class LoggedOutClient {
             if (params.length == 3) {
                 var user = new UserData(params[0], params[1], params[2]);
                 emails.put(params[0], params[2]);
-                server.register(user);
+                Main.tokens = server.register(user);
+                Main.state = State.LOGGEDIN;
                 return String.format("Nice to meet you %s!", params[0]);
+            }
+            else{
+                throw new RuntimeException();
             }
         }catch (NullPointerException ex) {
             return  "Sorry that Username is taken, try a different one!";
        }
         catch (Exception ex){
-            return "Expected: <Username> <Password>";
+            return "Expected: <Username> <Password> <Email>";
         }
-        return "";
     }
 
     public String quit() throws ResponseException {
