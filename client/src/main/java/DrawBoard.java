@@ -14,12 +14,12 @@ public class DrawBoard {
         int[] rows = perspectiveWhite ? new int[]{8,7,6,5,4,3,2,1} : new int[]{1,2,3,4,5,6,7,8};
         char[] cols = perspectiveWhite ? new char[]{'a','b','c','d','e','f','g','h'} : new char[]{'h','g','f','e','d','c','b','a'};
 
-        // Top column labels
+
         System.out.print("   ");
-        for (char c : cols) System.out.print(centerText(String.valueOf(c), SQUARE_WIDTH));
+        for (char c : cols){ System.out.print(centerText(String.valueOf(c), SQUARE_WIDTH));}
         System.out.println();
 
-        // Rows
+
         for (int rIndex = 0; rIndex < 8; rIndex++) {
             int r = rows[rIndex];
             System.out.print(r + " "); // row number
@@ -45,14 +45,14 @@ public class DrawBoard {
 
         // Bottom column labels
         System.out.print("   ");
-        for (char c : cols) System.out.print(centerText(String.valueOf(c), SQUARE_WIDTH));
+        for (char c : cols) {System.out.print(centerText(String.valueOf(c), SQUARE_WIDTH));}
         System.out.println();
     }
 
     // Determine piece color
     private static String getPieceColor(String piece) {
-        if (piece.equals(" ") ) return ""; // empty square has no color
-        if (piece.equals(piece.toUpperCase())) return WHITE_PIECE_COLOR; // white piece
+        if (piece.equals(" ") ){ return "";} // empty square has no color
+        if (piece.equals(piece.toUpperCase())) {return WHITE_PIECE_COLOR;} // white piece
         return BLACK_PIECE_COLOR; // black piece
     }
 
@@ -70,9 +70,11 @@ public class DrawBoard {
         board[0] = new String[]{"r","n","b","q","k","b","n","r"};
         board[1] = new String[]{"p","p","p","p","p","p","p","p"};
 
-        for (int r = 2; r <= 5; r++)
-            for (int c = 0; c < 8; c++)
+        for (int r = 2; r <= 5; r++) {
+            for (int c = 0; c < 8; c++) {
                 board[r][c] = " ";
+            }
+        }
 
         board[6] = new String[]{"P","P","P","P","P","P","P","P"};
         board[7] = new String[]{"R","N","B","Q","K","B","N","R"};

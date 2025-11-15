@@ -30,9 +30,7 @@ public class ResponseException extends Exception {
         return new ResponseException(status, message);
     }
 
-    public Code code() {
-        return code;
-    }
+
 
     public static Code fromHttpStatusCode(int httpStatusCode) {
         return switch (httpStatusCode) {
@@ -42,10 +40,5 @@ public class ResponseException extends Exception {
         };
     }
 
-    public int toHttpStatusCode() {
-        return switch (code) {
-            case ServerError -> 500;
-            case ClientError -> 400;
-        };
-    }
+
 }
