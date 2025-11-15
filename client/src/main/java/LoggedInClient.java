@@ -1,6 +1,5 @@
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Objects;
 import java.util.Scanner;
 
 import datamodel.GameData;
@@ -12,9 +11,9 @@ import ui.*;
 
 public class LoggedInClient {
     private final ServerFacade server;
-    public HashMap<Integer, Integer> idList = new HashMap<Integer, Integer>();
+    public HashMap<Integer, Integer> idList = new HashMap<>();
 
-    public LoggedInClient(String serverUrl) throws ResponseException {
+    public LoggedInClient(String serverUrl) {
         server = new ServerFacade(serverUrl);
         server.token = Main.tokens.authToken();
     }
@@ -115,7 +114,7 @@ public class LoggedInClient {
                 return "Expected: <ID> [WHITE|BLACK]";
             }
 
-            int userInputID = (int) Integer.parseInt(params[0]);
+            int userInputID = Integer.parseInt(params[0]);
             Double gameID = Double.valueOf(idList.get(userInputID));
 
             String color = params[1].toLowerCase();
@@ -133,7 +132,7 @@ public class LoggedInClient {
             return "Game ID must be a number";
         }
         catch (Exception e) {
-            return "An error occurred while joining the game";
+            return "Game is full";
         }
 
         return "";
