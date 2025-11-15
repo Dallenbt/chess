@@ -29,7 +29,7 @@ public class LoggedOutClient {
 
             try {
                 result = eval(line);
-                System.out.print(EscapeSequences.BLUE + result);
+                System.out.print(EscapeSequences.RED + result);
             } catch (Throwable e) {
                 var msg = e.toString();
                 System.out.print(msg);
