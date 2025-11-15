@@ -29,13 +29,14 @@ public class GameService {
         }
         ChessGame board = new ChessGame();
         GameData game = new GameData(0, null, null, gameName, board);
-        var madeGame = dataAccess.createGame(game);
-        return madeGame;
+        return dataAccess.createGame(game);
     }
 
     public void joinGame(String authToken, String color, int id) throws Exception{
         var auth = dataAccess.getAuth(authToken);
         var game = dataAccess.getGame(id);
+        System.out.println(game.whiteUsername());
+        System.out.println(game.blackUsername());
         if (auth == null) {
             throw new RuntimeException("Unauthorized");
         }

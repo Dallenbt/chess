@@ -56,6 +56,7 @@ public class LoggedInClient {
                 case "create" -> create(params);
                 case "list" -> list(params);
                 case "join" -> join(params);
+                case "observe" -> observe(params);
                 case "quit" -> quit();
                 default -> help();
             };
@@ -117,11 +118,8 @@ public class LoggedInClient {
             int userInputID = (int) Integer.parseInt(params[0]);
             Double gameID = Double.valueOf(idList.get(userInputID));
 
-            if (gameID == null) {
-                return "Invalid game ID";
-            }
-
             String color = params[1].toLowerCase();
+            server.joinGame(color.toUpperCase(), gameID);
             if (color.equals("white")) {
                 DrawBoard.printBoard(true);
             } else if (color.equals("black")) {
@@ -131,12 +129,29 @@ public class LoggedInClient {
             }
 
 
-            server.joinGame(color.toUpperCase(), gameID);
-
         } catch (NumberFormatException e) {
             return "Game ID must be a number";
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             return "An error occurred while joining the game";
+        }
+
+        return "";
+    }
+
+    public String observe(String... params) throws ResponseException {
+        try {
+            if (params.length != 1) {
+                return "Expected: <ID>";
+            }
+            int userInputID = Integer.parseInt(params[0]);
+            Double gameID = Double.valueOf(idList.get(userInputID));
+            DrawBoard.printBoard(true);
+        } catch (NumberFormatException e) {
+            return "Game ID must be a number";
+        }
+        catch (Exception e) {
+            return "Game does not exist";
         }
 
         return "";
