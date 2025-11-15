@@ -28,8 +28,9 @@ public class DrawBoard {
                 int c = perspectiveWhite ? cIndex : 7 - cIndex;
                 String cell = board[r-1][c];
 
-                boolean lightSquare = ((r-1) + c) % 2 == 0;
+                boolean lightSquare = (rIndex + cIndex) % 2 == 0;
                 String bg = lightSquare ? LIGHT_BG : DARK_BG;
+
 
                 String symbol = cell.equals(" ") ? " " : cell; // just letters now
                 String color = getPieceColor(cell);
