@@ -1,5 +1,6 @@
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Objects;
 import java.util.Scanner;
 
 import datamodel.GameData;
@@ -116,24 +117,25 @@ public class LoggedInClient {
                 return "Expected: <ID> [WHITE|BLACK]";
             }
 
+
             int userInputID = Integer.parseInt(params[0]);
             Double gameID = Double.valueOf(idList.get(userInputID));
-            if (gameID == null || gameID == 0.0){
-                throw new RuntimeException();
-            }
+
 
             String color = params[1].toLowerCase();
-            server.joinGame(color.toUpperCase(), gameID);
             if (color.equals("white")) {
+                server.joinGame(color.toUpperCase(), gameID);
                 DrawBoard.printBoard(true);
             } else if (color.equals("black")) {
+                server.joinGame(color.toUpperCase(), gameID);
                 DrawBoard.printBoard(false);
             } else {
                 return "Expected: <ID> [WHITE|BLACK]";
             }
 
 
-        } catch (NumberFormatException e) {
+        }
+        catch (NumberFormatException e) {
             return "Game ID must be a number";
         }
         catch (NullPointerException e) {
