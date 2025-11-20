@@ -27,6 +27,13 @@ public class Main {
                     System.out.printf("Had trouble logging you in: %s%n", ex.getMessage());
                 }
             }
+            if(state == State.PLAYING){
+                try{
+                    new PlayingClient(serverUrl).run();
+                } catch (Exception ex) {
+                    System.out.printf("Had trouble playing a game: %s%n", ex.getMessage());
+                }
+            }
         }
     }
 }
