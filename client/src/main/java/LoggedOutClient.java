@@ -69,9 +69,9 @@ public class LoggedOutClient {
                 return String.format("You signed in as %s.", params[0]);
             }
             else{
-                throw new RuntimeException();
+                throw new ArrayIndexOutOfBoundsException();
             }
-        } catch (RuntimeException ex) {
+        } catch (ArrayIndexOutOfBoundsException ex) {
             return "Expected: <Username> <Password>";
         }
         catch (Exception e) {
